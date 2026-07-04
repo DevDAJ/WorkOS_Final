@@ -12,9 +12,9 @@ type CareerRoleRow = {
 };
 
 interface AICareerMapResponse {
-  currentRoleId: string;
-  nodes: { roleId: string; tier: RoleNode["tier"] }[];
-  edges: { fromRoleId: string; toRoleId: string; category: string }[];
+  currentRoleName: string;
+  nodes: { roleName: string; tier: RoleNode["tier"] }[];
+  edges: { fromRoleName: string; toRoleName: string; category: string }[];
   reasoning: string;
 }
 
@@ -34,11 +34,13 @@ RULES:
 - Define logical progression edges between roles
 - A role appears in exactly one tier
 
+Available roles are listed by name. Use the EXACT role names from the list — do not modify or abbreviate them.
+
 Return ONLY JSON:
 {
-  "currentRoleId": "id of the role closest to user's current job",
-  "nodes": [{ "roleId": "id", "tier": "next"|"stretch"|"long-term" }],
-  "edges": [{ "fromRoleId": "id", "toRoleId": "id", "category": "NEXT"|"STRETCH"|"LONG_TERM" }],
+  "currentRoleName": "exact name of the role closest to user's current job",
+  "nodes": [{ "roleName": "exact role name", "tier": "next"|"stretch"|"long-term" }],
+  "edges": [{ "fromRoleName": "exact role name", "toRoleName": "exact role name", "category": "NEXT"|"STRETCH"|"LONG_TERM" }],
   "reasoning": "2-3 sentence explanation of this path"
 }`;
 
@@ -75,7 +77,7 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
   const roles = rolesRaw as unknown as CareerRoleRow[];
 
   const roleDescriptions = roles.map(
-    (r) => `- ID: ${r.id}\n  Name: ${r.name}\n  Category: ${r.category}\n  Seniority: ${r.seniority}\n  Description: ${r.description || "N/A"}`,
+    (r) => `- Name: ${r.name}\n  Category: ${r.category}\n  Seniority: ${r.seniority}\n  Description: ${r.description || "N/A"}`,
   ).join("\n");
 
   const currentJob = workHistory.find((w: any) => w.current);
@@ -111,35 +113,44 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
   }
 
   // Validate
-  if (!parsed.currentRoleId || !Array.isArray(parsed.nodes) || !Array.isArray(parsed.edges)) {
+  if (!parsed.currentRoleName || !Array.isArray(parsed.nodes) || !Array.isArray(parsed.edges)) {
     throw new Error("AI response missing required fields");
   }
 
-  const roleMap = new Map(roles.map((r) => [r.id, r]));
-  const allNodeIds = new Set<string>([parsed.currentRoleId, ...parsed.nodes.map((n) => n.roleId)]);
-
-  // Validate role IDs exist in DB
-  for (const id of allNodeIds) {
-    if (!roleMap.has(id)) throw new Error(`AI referenced unknown role: ${id}`);
+  // Resolve role names to IDs (case-insensitive)
+  const nameMap = new Map<string, (typeof roles)[0]>();
+  for (const r of roles) {
+    nameMap.set(r.name.toLowerCase(), r);
   }
+
+  const resolve = (name: string) => nameMap.get(name.toLowerCase());
+
+  // Filter to known roles, resolve to IDs
+  const currentRoleRaw = resolve(parsed.currentRoleName);
+  if (!currentRoleRaw) throw new Error(`AI referenced unknown role: ${parsed.currentRoleName}`);
+
+  const validNodes = parsed.nodes.filter((n) => resolve(n.roleName));
+  const validNodeNames = new Set([currentRoleRaw.name.toLowerCase(), ...validNodes.map((n) => n.roleName.toLowerCase())]);
+  const validEdges = parsed.edges.filter(
+    (e) => validNodeNames.has(e.fromRoleName.toLowerCase()) && validNodeNames.has(e.toRoleName.toLowerCase())
+  );
 
   // Build nodes with full role data
   const nodes: RoleNode[] = [];
 
   // Current role
-  const currentRole = roleMap.get(parsed.currentRoleId)!;
   nodes.push({
-    id: currentRole.id,
-    name: currentRole.name,
-    category: currentRole.category,
-    seniority: currentRole.seniority,
-    description: currentRole.description,
+    id: currentRoleRaw.id,
+    name: currentRoleRaw.name,
+    category: currentRoleRaw.category,
+    seniority: currentRoleRaw.seniority,
+    description: currentRoleRaw.description,
     tier: "current",
   });
 
   // Other tiers
-  for (const n of parsed.nodes) {
-    const role = roleMap.get(n.roleId)!;
+  for (const n of validNodes) {
+    const role = resolve(n.roleName)!;
     nodes.push({
       id: role.id,
       name: role.name,
@@ -150,17 +161,18 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
     });
   }
 
-  // Validate and build edges
+  // Build edges
   const edgeSet = new Set<string>();
   const edges: RoleEdge[] = [];
-  for (const e of parsed.edges) {
-    const key = `${e.fromRoleId}-${e.toRoleId}`;
-    if (!allNodeIds.has(e.fromRoleId) || !allNodeIds.has(e.toRoleId)) continue;
+  for (const e of validEdges) {
+    const fromRole = resolve(e.fromRoleName)!;
+    const toRole = resolve(e.toRoleName)!;
+    const key = `${fromRole.id}-${toRole.id}`;
     if (edgeSet.has(key)) continue;
     edgeSet.add(key);
     edges.push({
-      fromRoleId: e.fromRoleId,
-      toRoleId: e.toRoleId,
+      fromRoleId: fromRole.id,
+      toRoleId: toRole.id,
       category: e.category,
       requiredSkillScore: 0,
     });

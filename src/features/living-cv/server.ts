@@ -77,7 +77,7 @@ export async function getSocialLinks(userId: string): Promise<SocialLink[]> {
 
 export async function getFullCV(userId: string) {
   const [personalInfo, education, workExperience, certifications, awards, languages, references, socialLinks] =
-    await prisma.$transaction([
+    await Promise.all([
       prisma.personalInfo.findUnique({ where: { userId } }),
       prisma.education.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
       prisma.workExperience.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),

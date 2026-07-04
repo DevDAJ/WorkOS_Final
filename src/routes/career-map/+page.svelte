@@ -5,11 +5,13 @@
   import { seniorityRank, TIER_ORDER } from "$lib/graph/layout";
 
   let { data } = $props();
-  let { suggestions, previousRoleNames } = $state(data);
+  let { previousRoleNames } = $state(data);
   let graph = $state<typeof data.graph | null>(data.graph);
   let selectedRole = $state<typeof data.graph.nodes[0] | null>(null);
   let aiError = $state(false);
   let aiReasoning = $state<string | null>(null);
+  let suggestions = $state<any[]>([]);
+  let suggestionsLoading = $state(true);
 
   $effect(() => {
     const ctrl = new AbortController();
@@ -20,8 +22,12 @@
           graph = result.graph;
           aiReasoning = result.reasoning || null;
         }
+        if (result.suggestions) {
+          suggestions = result.suggestions;
+        }
+        suggestionsLoading = false;
       })
-      .catch(() => { aiError = true; });
+      .catch(() => { aiError = true; suggestionsLoading = false; });
     return () => ctrl.abort();
   });
 
@@ -208,24 +214,28 @@
         </Card.Root>
       {/if}
 
-      {#if suggestions.length}
+      {#if suggestions.length || suggestionsLoading}
         <Card.Root class="mt-4">
           <Card.Header>
             <Card.Title>Suggested Quests</Card.Title>
           </Card.Header>
           <Card.Content class="space-y-3">
-            {#each suggestions as s}
-              <div class="rounded-lg border p-3">
-                <p class="text-sm font-medium text-foreground">{s.title}</p>
-                <p class="text-xs text-muted-foreground">{s.description}</p>
-                <div class="mt-2 flex items-center justify-between">
-                  <span class="text-xs text-muted-foreground">{s.estimatedTime}</span>
-                  <a href="/career-quest?roleId={s.roleId}">
-                    <Button size="xs" variant="outline">Start</Button>
-                  </a>
+            {#if suggestionsLoading}
+              <p class="text-sm italic text-muted-foreground">Finding relevant quests...</p>
+            {:else}
+              {#each suggestions as s}
+                <div class="rounded-lg border p-3">
+                  <p class="text-sm font-medium text-foreground">{s.title}</p>
+                  <p class="text-xs text-muted-foreground">{s.description}</p>
+                  <div class="mt-2 flex items-center justify-between">
+                    <span class="text-xs text-muted-foreground">{s.estimatedTime}</span>
+                    <a href="/career-quest?roleId={s.roleId}">
+                      <Button size="xs" variant="outline">Start</Button>
+                    </a>
+                  </div>
                 </div>
-              </div>
-            {/each}
+              {/each}
+            {/if}
           </Card.Content>
         </Card.Root>
       {/if}

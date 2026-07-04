@@ -1,7 +1,6 @@
 import { prisma } from "$lib/server";
 import { buildCareerGraph } from "$lib/graph/career-graph";
 import { computeRoleMatch } from "$lib/scoring/skill-role-match";
-import { suggestQuests } from "$lib/ai/suggestions";
 import { roles, edges } from "./seed";
 
 export async function seedRoles(): Promise<void> {
@@ -56,10 +55,9 @@ export async function getCareerMap(userId: string, currentJobTitle?: string) {
     buildCareerGraph(userId, currentJobTitle),
   ]);
 
-  const suggestions = await suggestQuests(userId, graph);
   return {
     graph,
-    suggestions,
+    suggestions: [],
     previousRoleNames: [...new Set(previousRoles.map((r) => r.role))],
   };
 }

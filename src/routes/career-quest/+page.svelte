@@ -28,14 +28,18 @@
 
   let questData = $state(data as QuestData);
 
-  // Detect if a quest has default tasks and try AI upgrade
-  let aiUpgrading = $state(false);
   let aiUpgradeError = $state(false);
+  let aiUpgrading = $state(
+    questData.quests[0]?.tasks.some((t) => t.description.startsWith("Learn and demonstrate")) ?? false
+  );
 
   $effect(() => {
     const q = questData.quests[0];
-    if (!q || q.tasks.some((t) => !t.description.startsWith("Learn and demonstrate"))) return;
-    aiUpgrading = true;
+    if (!q) { aiUpgrading = false; return; }
+    if (!q.tasks.some((t) => t.description.startsWith("Learn and demonstrate"))) {
+      aiUpgrading = false;
+      return;
+    }
     const ctrl = new AbortController();
     fetch(`/api/ai/career-quest?questId=${q.id}`, { signal: ctrl.signal })
       .then((r) => r.json())
@@ -102,34 +106,41 @@
         </div>
 
         {#if aiUpgrading}
-          <p class="text-sm italic text-muted-foreground">Generating personalized tasks...</p>
-        {:else if aiUpgradeError}
-          <p class="mb-2 text-sm text-danger">Could not personalize tasks.</p>
-        {/if}
-
-        {#if quest.tasks.length}
           <div class="flex flex-col gap-2">
-            {#each quest.tasks as task}
-              <div class="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-                <div class="flex items-center gap-2">
-                  <span class="size-2 rounded-full {task.status === 'COMPLETED' ? 'bg-success' : 'bg-warning'}"></span>
-                  <span class={task.status === "COMPLETED" ? "text-muted-foreground line-through" : "text-foreground"}>
-                    {task.description}
-                    {#if task.skillName}
-                      <Badge variant="outline" size="xs" class="ml-1">{task.skillName}</Badge>
-                    {/if}
-                  </span>
-                </div>
-                {#if task.status !== "COMPLETED"}
-                  <form method="POST" action="?/completeTask">
-                    <input type="hidden" name="questId" value={quest.id} />
-                    <input type="hidden" name="taskId" value={task.id} />
-                    <Button type="submit" size="xs">Complete</Button>
-                  </form>
-                {/if}
-              </div>
+            {#each [1, 2, 3] as _}
+              <div class="h-10 animate-pulse rounded-lg bg-muted"></div>
             {/each}
           </div>
+        {:else}
+          {#if aiUpgradeError}
+            <p class="mb-2 text-sm text-danger">Could not personalize tasks.</p>
+          {/if}
+          {#if quest.tasks.length}
+            <div class="flex flex-col gap-2">
+              {#each quest.tasks as task}
+                <div class="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+                  <div class="flex items-center gap-2">
+                    <span class="size-2 rounded-full {task.status === 'COMPLETED' ? 'bg-success' : 'bg-warning'}"></span>
+                    <span class={task.status === "COMPLETED" ? "text-muted-foreground line-through" : "text-foreground"}>
+                      {task.description}
+                      {#if task.skillName}
+                        <Badge variant="outline" size="xs" class="ml-1">{task.skillName}</Badge>
+                      {/if}
+                    </span>
+                  </div>
+                  {#if task.status !== "COMPLETED"}
+                    <form method="POST" action="?/completeTask">
+                      <input type="hidden" name="questId" value={quest.id} />
+                      <input type="hidden" name="taskId" value={task.id} />
+                      <Button type="submit" size="xs">Complete</Button>
+                    </form>
+                  {/if}
+                </div>
+              {/each}
+            </div>
+          {:else}
+            <p class="text-sm text-muted-foreground">No tasks yet.</p>
+          {/if}
         {/if}
       </Card.Content>
     </Card.Root>

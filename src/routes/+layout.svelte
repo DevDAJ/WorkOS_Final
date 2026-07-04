@@ -47,7 +47,7 @@
         CareerOS
       </a>
 
-      <div class="hidden md:flex md:items-center md:gap-0.5">
+      <div class="hidden md:flex md:items-center md:gap-0.5" data-sveltekit-preload-data="hover">
         {#each links as link}
           <a
             href={link.href}

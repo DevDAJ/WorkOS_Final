@@ -19,9 +19,10 @@
       description: string | null;
       progress: number;
       status: string;
-      roleId: string;
+      roleId: string | null;
       tasks: TaskData[];
       role?: { name: string; category: string };
+      roleData?: { name: string; category: string; seniority: string; description: string };
     }>;
     user: { id: string };
   }
@@ -54,6 +55,10 @@
       .catch(() => { aiUpgradeError = true; aiUpgrading = false; });
     return () => ctrl.abort();
   });
+
+  function isAiQuest(quest: any) {
+    return quest.id === "active";
+  }
 </script>
 
 <div class="mx-auto max-w-4xl px-4 py-8">
@@ -77,7 +82,12 @@
         <div class="flex items-start justify-between">
           <div>
             <Card.Title>{quest.title}</Card.Title>
-            {#if quest.role}
+            {#if quest.roleData}
+              <Card.Description>
+                <Badge variant="outline">{quest.roleData.category}</Badge>
+                <span class="ml-1 text-xs text-muted-foreground">{quest.roleData.seniority}</span>
+              </Card.Description>
+            {:else if quest.role}
               <Card.Description>
                 <Badge variant="outline">{quest.role.category}</Badge>
               </Card.Description>
@@ -92,18 +102,20 @@
         </div>
       </Card.Header>
       <Card.Content>
-        <div class="mb-4">
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-muted-foreground">Progress</span>
-            <span class="font-medium">{Math.round(quest.progress)}%</span>
+        {#if !isAiQuest(quest)}
+          <div class="mb-4">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-muted-foreground">Progress</span>
+              <span class="font-medium">{Math.round(quest.progress)}%</span>
+            </div>
+            <div class="mt-1 h-2 w-full rounded-full bg-muted">
+              <div
+                class="h-2 rounded-full bg-primary transition-all"
+                style="width: {quest.progress}%"
+              ></div>
+            </div>
           </div>
-          <div class="mt-1 h-2 w-full rounded-full bg-muted">
-            <div
-              class="h-2 rounded-full bg-primary transition-all"
-              style="width: {quest.progress}%"
-            ></div>
-          </div>
-        </div>
+        {/if}
 
         {#if aiUpgrading}
           <div class="flex flex-col gap-2">
@@ -128,7 +140,7 @@
                       {/if}
                     </span>
                   </div>
-                  {#if task.status !== "COMPLETED"}
+                  {#if task.status !== "COMPLETED" && !isAiQuest(quest)}
                     <form method="POST" action="?/completeTask">
                       <input type="hidden" name="questId" value={quest.id} />
                       <input type="hidden" name="taskId" value={task.id} />

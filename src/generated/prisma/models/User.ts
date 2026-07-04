@@ -53,6 +53,7 @@ export type UserCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   careerMapCache: number
+  activeQuest: number
   _all: number
 }
 
@@ -86,6 +87,7 @@ export type UserCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   careerMapCache?: true
+  activeQuest?: true
   _all?: true
 }
 
@@ -170,6 +172,7 @@ export type UserGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   careerMapCache: runtime.JsonValue | null
+  activeQuest: runtime.JsonValue | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -202,6 +205,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   careerMapCache?: Prisma.JsonNullableFilter<"User">
+  activeQuest?: Prisma.JsonNullableFilter<"User">
   personalInfo?: Prisma.XOR<Prisma.PersonalInfoNullableScalarRelationFilter, Prisma.PersonalInfoWhereInput> | null
   education?: Prisma.EducationListRelationFilter
   workExperience?: Prisma.WorkExperienceListRelationFilter
@@ -228,6 +232,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   careerMapCache?: Prisma.SortOrderInput | Prisma.SortOrder
+  activeQuest?: Prisma.SortOrderInput | Prisma.SortOrder
   personalInfo?: Prisma.PersonalInfoOrderByWithRelationInput
   education?: Prisma.EducationOrderByRelationAggregateInput
   workExperience?: Prisma.WorkExperienceOrderByRelationAggregateInput
@@ -257,6 +262,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   careerMapCache?: Prisma.JsonNullableFilter<"User">
+  activeQuest?: Prisma.JsonNullableFilter<"User">
   personalInfo?: Prisma.XOR<Prisma.PersonalInfoNullableScalarRelationFilter, Prisma.PersonalInfoWhereInput> | null
   education?: Prisma.EducationListRelationFilter
   workExperience?: Prisma.WorkExperienceListRelationFilter
@@ -283,6 +289,7 @@ export type UserOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   careerMapCache?: Prisma.SortOrderInput | Prisma.SortOrder
+  activeQuest?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -300,6 +307,7 @@ export type UserScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   careerMapCache?: Prisma.JsonNullableWithAggregatesFilter<"User">
+  activeQuest?: Prisma.JsonNullableWithAggregatesFilter<"User">
 }
 
 export type UserCreateInput = {
@@ -311,6 +319,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -337,6 +346,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -363,6 +373,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -389,6 +400,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -415,6 +427,7 @@ export type UserCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type UserUpdateManyMutationInput = {
@@ -426,6 +439,7 @@ export type UserUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -437,6 +451,7 @@ export type UserUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -448,6 +463,7 @@ export type UserCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   careerMapCache?: Prisma.SortOrder
+  activeQuest?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -713,6 +729,7 @@ export type UserCreateWithoutPersonalInfoInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
@@ -738,6 +755,7 @@ export type UserUncheckedCreateWithoutPersonalInfoInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
@@ -779,6 +797,7 @@ export type UserUpdateWithoutPersonalInfoInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
@@ -804,6 +823,7 @@ export type UserUncheckedUpdateWithoutPersonalInfoInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
@@ -829,6 +849,7 @@ export type UserCreateWithoutEducationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
@@ -854,6 +875,7 @@ export type UserUncheckedCreateWithoutEducationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
@@ -895,6 +917,7 @@ export type UserUpdateWithoutEducationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
@@ -920,6 +943,7 @@ export type UserUncheckedUpdateWithoutEducationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
@@ -945,6 +969,7 @@ export type UserCreateWithoutWorkExperienceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
@@ -970,6 +995,7 @@ export type UserUncheckedCreateWithoutWorkExperienceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
@@ -1011,6 +1037,7 @@ export type UserUpdateWithoutWorkExperienceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
@@ -1036,6 +1063,7 @@ export type UserUncheckedUpdateWithoutWorkExperienceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
@@ -1061,6 +1089,7 @@ export type UserCreateWithoutProjectsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1086,6 +1115,7 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1127,6 +1157,7 @@ export type UserUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1152,6 +1183,7 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1177,6 +1209,7 @@ export type UserCreateWithoutSkillsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1202,6 +1235,7 @@ export type UserUncheckedCreateWithoutSkillsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1243,6 +1277,7 @@ export type UserUpdateWithoutSkillsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1268,6 +1303,7 @@ export type UserUncheckedUpdateWithoutSkillsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1293,6 +1329,7 @@ export type UserCreateWithoutCertificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1318,6 +1355,7 @@ export type UserUncheckedCreateWithoutCertificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1359,6 +1397,7 @@ export type UserUpdateWithoutCertificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1384,6 +1423,7 @@ export type UserUncheckedUpdateWithoutCertificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1409,6 +1449,7 @@ export type UserCreateWithoutAwardsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1434,6 +1475,7 @@ export type UserUncheckedCreateWithoutAwardsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1475,6 +1517,7 @@ export type UserUpdateWithoutAwardsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1500,6 +1543,7 @@ export type UserUncheckedUpdateWithoutAwardsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1525,6 +1569,7 @@ export type UserCreateWithoutLanguagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1550,6 +1595,7 @@ export type UserUncheckedCreateWithoutLanguagesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1591,6 +1637,7 @@ export type UserUpdateWithoutLanguagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1616,6 +1663,7 @@ export type UserUncheckedUpdateWithoutLanguagesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1641,6 +1689,7 @@ export type UserCreateWithoutReferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1666,6 +1715,7 @@ export type UserUncheckedCreateWithoutReferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1707,6 +1757,7 @@ export type UserUpdateWithoutReferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1732,6 +1783,7 @@ export type UserUncheckedUpdateWithoutReferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1757,6 +1809,7 @@ export type UserCreateWithoutSocialLinksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1782,6 +1835,7 @@ export type UserUncheckedCreateWithoutSocialLinksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1823,6 +1877,7 @@ export type UserUpdateWithoutSocialLinksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1848,6 +1903,7 @@ export type UserUncheckedUpdateWithoutSocialLinksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1873,6 +1929,7 @@ export type UserCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -1898,6 +1955,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -1939,6 +1997,7 @@ export type UserUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -1964,6 +2023,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -1989,6 +2049,7 @@ export type UserCreateWithoutCareerMatchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -2014,6 +2075,7 @@ export type UserUncheckedCreateWithoutCareerMatchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -2055,6 +2117,7 @@ export type UserUpdateWithoutCareerMatchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -2080,6 +2143,7 @@ export type UserUncheckedUpdateWithoutCareerMatchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -2105,6 +2169,7 @@ export type UserCreateWithoutCareerQuestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -2130,6 +2195,7 @@ export type UserUncheckedCreateWithoutCareerQuestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -2171,6 +2237,7 @@ export type UserUpdateWithoutCareerQuestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -2196,6 +2263,7 @@ export type UserUncheckedUpdateWithoutCareerQuestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -2221,6 +2289,7 @@ export type UserCreateWithoutPostedJobsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -2246,6 +2315,7 @@ export type UserUncheckedCreateWithoutPostedJobsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -2287,6 +2357,7 @@ export type UserUpdateWithoutPostedJobsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -2312,6 +2383,7 @@ export type UserUncheckedUpdateWithoutPostedJobsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -2337,6 +2409,7 @@ export type UserCreateWithoutApplicationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
   education?: Prisma.EducationCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
@@ -2362,6 +2435,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
   education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
   workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
@@ -2403,6 +2477,7 @@ export type UserUpdateWithoutApplicationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
@@ -2428,6 +2503,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
   education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
   workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
@@ -2601,6 +2677,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   careerMapCache?: boolean
+  activeQuest?: boolean
   personalInfo?: boolean | Prisma.User$personalInfoArgs<ExtArgs>
   education?: boolean | Prisma.User$educationArgs<ExtArgs>
   workExperience?: boolean | Prisma.User$workExperienceArgs<ExtArgs>
@@ -2628,6 +2705,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   careerMapCache?: boolean
+  activeQuest?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2639,6 +2717,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   careerMapCache?: boolean
+  activeQuest?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -2650,9 +2729,10 @@ export type UserSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   careerMapCache?: boolean
+  activeQuest?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "image" | "passwordHash" | "createdAt" | "updatedAt" | "careerMapCache", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "image" | "passwordHash" | "createdAt" | "updatedAt" | "careerMapCache" | "activeQuest", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   personalInfo?: boolean | Prisma.User$personalInfoArgs<ExtArgs>
   education?: boolean | Prisma.User$educationArgs<ExtArgs>
@@ -2702,6 +2782,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdAt: Date
     updatedAt: Date
     careerMapCache: runtime.JsonValue | null
+    activeQuest: runtime.JsonValue | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -3148,6 +3229,7 @@ export interface UserFieldRefs {
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly careerMapCache: Prisma.FieldRef<"User", 'Json'>
+  readonly activeQuest: Prisma.FieldRef<"User", 'Json'>
 }
     
 

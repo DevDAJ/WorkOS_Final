@@ -72,19 +72,20 @@
     if (!node.quest) return;
     creatingQuest = true;
     try {
-      const res = await fetch("/api/career-quest/create-from-ai", {
+      await fetch("/api/career-quest/save-active", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: node.name,
-          category: node.category,
-          seniority: node.seniority,
-          description: node.description,
+          role: {
+            name: node.name,
+            category: node.category,
+            seniority: node.seniority,
+            description: node.description,
+          },
           quest: node.quest,
         }),
       });
-      const { roleId } = await res.json();
-      window.location.href = `/career-quest?roleId=${roleId}`;
+      window.location.href = "/career-quest";
     } catch {
       creatingQuest = false;
     }

@@ -98,7 +98,8 @@ export const UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  careerMapCache: 'careerMapCache'
+  careerMapCache: 'careerMapCache',
+  activeQuest: 'activeQuest'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]

@@ -76,14 +76,16 @@ export async function getSocialLinks(userId: string): Promise<SocialLink[]> {
 }
 
 export async function getFullCV(userId: string) {
-  return {
-    personalInfo: await getPersonalInfo(userId),
-    education: await getEducation(userId),
-    workExperience: await getWorkExperience(userId),
-    certifications: await getCertifications(userId),
-    awards: await getAwards(userId),
-    languages: await getLanguages(userId),
-    references: await getReferences(userId),
-    socialLinks: await getSocialLinks(userId),
-  };
+  const [personalInfo, education, workExperience, certifications, awards, languages, references, socialLinks] =
+    await prisma.$transaction([
+      prisma.personalInfo.findUnique({ where: { userId } }),
+      prisma.education.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
+      prisma.workExperience.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
+      prisma.certification.findMany({ where: { userId }, orderBy: { date: "desc" } }),
+      prisma.award.findMany({ where: { userId }, orderBy: { date: "desc" } }),
+      prisma.language.findMany({ where: { userId } }),
+      prisma.reference.findMany({ where: { userId } }),
+      prisma.socialLink.findMany({ where: { userId } }),
+    ]);
+  return { personalInfo, education, workExperience, certifications, awards, languages, references, socialLinks };
 }

@@ -1,12 +1,10 @@
 import { prisma } from "$lib/server";
 import { redirect } from "@sveltejs/kit";
-import { seedJobsOnce, getJobs } from "$lib/server/jobs";
+import { getJobs } from "$lib/server/jobs";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals, url }) => {
   if (!locals.user) redirect(302, "/login");
-
-  await seedJobsOnce();
 
   const filters = {
     search: url.searchParams.get("search") || undefined,
@@ -41,4 +39,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   });
 
   return { jobs, total: jobData.total };
+};
+
+export const config = {
+  isr: { expiration: 60 },
 };

@@ -12,7 +12,7 @@
   <div class="w-full max-w-sm space-y-8">
     <div class="text-center">
       <h1 class="text-2xl font-bold text-foreground">Sign in</h1>
-      <p class="mt-1 text-sm text-muted-foreground">Welcome back to LivingCV</p>
+      <p class="mt-1 text-sm text-muted-foreground">Welcome back to CarreerOS</p>
     </div>
 
     <form method="POST" action="?/login" class="space-y-4">

@@ -6,9 +6,8 @@
 
   let { data } = $props();
   let { suggestions, previousRoleNames } = $state(data);
-  let graph = $state<typeof data.graph | null>(null);
+  let graph = $state<typeof data.graph | null>(data.graph);
   let selectedRole = $state<typeof data.graph.nodes[0] | null>(null);
-  let aiLoading = $state(true);
   let aiError = $state(false);
   let aiReasoning = $state<string | null>(null);
 
@@ -21,17 +20,10 @@
           graph = result.graph;
           aiReasoning = result.reasoning || null;
         }
-        aiLoading = false;
       })
-      .catch(() => { aiError = true; aiLoading = false; });
+      .catch(() => { aiError = true; });
     return () => ctrl.abort();
   });
-
-  function showFallback() {
-    graph = data.graph;
-    aiError = false;
-    aiLoading = false;
-  }
 
   const tierLabels: Record<string, string> = {
     current: "Current",
@@ -107,11 +99,8 @@
   <header class="mb-8">
     <h1 class="text-3xl font-bold text-foreground">Career Map</h1>
     <p class="mt-1 text-muted-foreground">Your career graph &mdash; visualize your path</p>
-    {#if aiLoading}
-      <p class="mt-3 italic text-muted-foreground">Generating AI-powered career map...</p>
-    {:else if aiError}
+    {#if aiError}
       <p class="mt-3 text-sm text-danger">Could not generate AI career map.</p>
-      <Button variant="outline" size="sm" class="mt-2" onclick={showFallback}>Show example map</Button>
     {:else if aiReasoning}
       <p class="mt-3 rounded-lg bg-brand/10 px-4 py-2 text-sm text-brand">{aiReasoning}</p>
     {/if}
@@ -158,7 +147,7 @@
             {/each}
           </div>
           {:else}
-            <p class="py-8 text-center text-sm text-muted-foreground">Waiting for AI to generate your personalized career map...</p>
+            <p class="py-8 text-center text-sm text-muted-foreground">Loading your career map...</p>
           {/if}
         </Card.Content>
       </Card.Root>

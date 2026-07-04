@@ -1,11 +1,10 @@
 import { prisma } from "$lib/server";
-import { buildCareerGraph } from "$lib/graph/career-graph";
 import { computeRoleMatch } from "$lib/scoring/skill-role-match";
-import { roles, edges } from "./seed";
 
 export async function seedRoles(): Promise<void> {
+  const { roles, edges } = await import("./seed");
   const existing = await prisma.careerRole.findFirst();
-  if (existing) return; // already seeded
+  if (existing) return;
 
   for (const r of roles) {
     await prisma.careerRole.create({
@@ -46,17 +45,14 @@ export async function seedRoles(): Promise<void> {
   }
 }
 
-export async function getCareerMap(userId: string, currentJobTitle?: string) {
-  const [previousRoles, graph] = await Promise.all([
-    prisma.workExperience.findMany({
-      where: { userId, current: false },
-      select: { role: true },
-    }),
-    buildCareerGraph(userId, currentJobTitle),
-  ]);
+export async function getCareerMap(userId: string, _currentJobTitle?: string) {
+  const previousRoles = await prisma.workExperience.findMany({
+    where: { userId, current: false },
+    select: { role: true },
+  });
 
   return {
-    graph,
+    graph: { nodes: [], edges: [] },
     suggestions: [],
     previousRoleNames: [...new Set(previousRoles.map((r) => r.role))],
   };
@@ -73,7 +69,6 @@ export async function getRoleMatchDetail(userId: string, roleId: string) {
 
   if (!role) return null;
 
-  // upsert match result
   await prisma.careerMatch.upsert({
     where: { userId_roleId: { userId, roleId } },
     update: {

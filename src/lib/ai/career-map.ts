@@ -1,51 +1,96 @@
 import { prisma } from "$lib/server";
 import { callAI } from "./client";
 import type { CareerGraph, RoleNode, RoleEdge } from "$lib/graph/career-graph";
-import type { Prisma } from "$generated/prisma/client";
 
-type CareerRoleRow = {
-  id: string;
+interface AIQuestTask {
+  description: string;
+  skillName: string;
+}
+
+interface AIQuest {
+  title: string;
+  description: string;
+  tasks: AIQuestTask[];
+}
+
+interface AIRole {
   name: string;
   category: string;
   seniority: string;
-  description: string | null;
-};
+  description: string;
+  matchScore: number;
+  skillGaps: string[];
+  tier: "current" | "next";
+  quest: AIQuest;
+}
+
+interface AIEdge {
+  fromRole: string;
+  toRole: string;
+}
 
 interface AICareerMapResponse {
-  currentRoleName: string;
-  nodes: { roleName: string; tier: RoleNode["tier"] }[];
-  edges: { fromRoleName: string; toRoleName: string; category: string }[];
+  currentLevel: string;
+  nextLevel: string;
+  roles: AIRole[];
+  edges: AIEdge[];
   reasoning: string;
 }
 
 const SYSTEM_PROMPT = `You are a career path architect AI. Design a personalized career progression map.
 
-TIERS:
-- "current": the user's current role (exactly 1)
-- "next": achievable with focused effort (1-6 months)
-- "stretch": requires significant skill building (6-18 months)
-- "long-term": aspirational (18+ months)
+Based on the user's profile, determine their current seniority level from their work history. Then:
+
+1. Generate roles at their current seniority level — include:
+   Their actual current job title (exact match from work history)
+   Lateral moves in related fields (e.g. Frontend Engineer → UI/UX Designer)
+
+2. Generate roles at the NEXT seniority level (one step up from their current level)
+
+3. For EVERY role, generate a concrete quest with:
+   - A motivating title
+   - A short description of why this role fits
+   - 3-5 specific, actionable learning tasks (include project ideas, not just "Learn X")
+   - Each task must target a specific skill
+
+4. Define edges connecting current-tier roles to next-tier roles
 
 RULES:
-- Assign exactly 1 role as "current"
-- Return ONLY the tier for "next", "stretch", and "long-term" roles in the nodes array
-- Select 2-4 roles for "next", 2-4 for "stretch", 2-4 for "long-term"
-- Exclude roles irrelevant to this user
-- Define logical progression edges between roles
-- A role appears in exactly one tier
-
-Available roles are listed by name. Use the EXACT role names from the list — do not modify or abbreviate them.
+- Generate realistic, specific role names (e.g. "Senior Frontend Engineer", not "Role 1")
+- Each role must have a unique name
+- 2-4 roles per tier
+- matchScore: 0-100 based on how well the user's skills overlap with this role
+- skillGaps: specific skills the user needs to develop for this role
 
 Return ONLY JSON:
 {
-  "currentRoleName": "exact name of the role closest to user's current job",
-  "nodes": [{ "roleName": "exact role name", "tier": "next"|"stretch"|"long-term" }],
-  "edges": [{ "fromRoleName": "exact role name", "toRoleName": "exact role name", "category": "NEXT"|"STRETCH"|"LONG_TERM" }],
-  "reasoning": "2-3 sentence explanation of this path"
+  "currentLevel": "the user's current seniority level (e.g. senior, mid)",
+  "nextLevel": "the next seniority level (e.g. lead, senior)",
+  "roles": [
+    {
+      "name": "exact role name",
+      "category": "FRONTEND|BACKEND|DEVOPS|FULLSTACK|DATA|ML|MOBILE|DESIGN|PM|QA|SRE|SECURITY|OTHER",
+      "seniority": "JUNIOR|MID|SENIOR|STAFF|PRINCIPAL",
+      "description": "1-2 sentence description of the role",
+      "matchScore": 75,
+      "skillGaps": ["skill1", "skill2"],
+      "tier": "current|next",
+      "quest": {
+        "title": "Short motivating title",
+        "description": "Why this role is a good next step",
+        "tasks": [
+          { "description": "Build a project that demonstrates X", "skillName": "X" }
+        ]
+      }
+    }
+  ],
+  "edges": [
+    { "fromRole": "exact current role name", "toRole": "exact next role name" }
+  ],
+  "reasoning": "2-3 sentence explanation of this career path"
 }`;
 
 export async function generateAICareerMap(userId: string): Promise<{ graph: CareerGraph; reasoning: string | null }> {
-  // Check cache
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { careerMapCache: true },
@@ -59,9 +104,7 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
     }
   }
 
-  // Fetch all data in parallel
-  const [rolesRaw, workHistory, skills, projects, education, certifications, personalInfo] = await Promise.all([
-    prisma.careerRole.findMany({ orderBy: { seniority: "asc" } }),
+  const [workHistory, skills, projects, education, certifications, personalInfo] = await Promise.all([
     prisma.workExperience.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
     prisma.skill.findMany({ where: { userId }, select: { name: true, category: true, yearsOfExperience: true } }),
     prisma.project.findMany({
@@ -74,17 +117,17 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
     prisma.certification.findMany({ where: { userId }, take: 3 }),
     prisma.personalInfo.findUnique({ where: { userId } }),
   ]);
-  const roles = rolesRaw as unknown as CareerRoleRow[];
-
-  const roleDescriptions = roles.map(
-    (r) => `- Name: ${r.name}\n  Category: ${r.category}\n  Seniority: ${r.seniority}\n  Description: ${r.description || "N/A"}`,
-  ).join("\n");
 
   const currentJob = workHistory.find((w: any) => w.current);
+  const allRoles = workHistory.map((w: any) => w.role).filter(Boolean);
+
   const userPrompt = [
     `USER PROFILE:`,
     `Current job: ${currentJob?.role || personalInfo?.title || "Unknown"}`,
     personalInfo?.summary ? `Summary: ${personalInfo.summary}` : null,
+    ``,
+    `ALL ROLES HELD:`,
+    ...allRoles.map((r: string) => `- ${r}`),
     ``,
     `WORK HISTORY:`,
     ...workHistory.map((w: any) => `- ${w.role} at ${w.company} (${w.current ? "Current" : `${w.startDate ? new Date(w.startDate).getFullYear() : ""} - ${w.endDate ? new Date(w.endDate).getFullYear() : ""}`})`),
@@ -97,9 +140,6 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
     ``,
     education.length > 0 ? `EDUCATION:\n${(education as any[]).map((e: any) => `- ${e.degree} in ${e.field} at ${e.institution}`).join("\n")}\n` : "",
     certifications.length > 0 ? `CERTIFICATIONS:\n${(certifications as any[]).map((c: any) => `- ${c.name} (${c.issuer})`).join("\n")}\n` : "",
-    ``,
-    `AVAILABLE CAREER ROLES:`,
-    roleDescriptions,
   ].filter(Boolean).join("\n");
 
   const aiResult = await callAI(SYSTEM_PROMPT, userPrompt);
@@ -112,68 +152,49 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
     throw new Error("AI returned invalid JSON");
   }
 
-  // Validate
-  if (!parsed.currentRoleName || !Array.isArray(parsed.nodes) || !Array.isArray(parsed.edges)) {
+  if (!Array.isArray(parsed.roles) || !Array.isArray(parsed.edges) || !parsed.currentLevel) {
     throw new Error("AI response missing required fields");
   }
 
-  // Resolve role names to IDs (case-insensitive)
-  const nameMap = new Map<string, (typeof roles)[0]>();
-  for (const r of roles) {
-    nameMap.set(r.name.toLowerCase(), r);
+  const roleNameMap = new Map<string, AIRole>();
+  for (const r of parsed.roles) {
+    roleNameMap.set(r.name, r);
   }
 
-  const resolve = (name: string) => nameMap.get(name.toLowerCase());
-
-  // Filter to known roles, resolve to IDs
-  const currentRoleRaw = resolve(parsed.currentRoleName);
-  if (!currentRoleRaw) throw new Error(`AI referenced unknown role: ${parsed.currentRoleName}`);
-
-  const validNodes = parsed.nodes.filter((n) => resolve(n.roleName));
-  const validNodeNames = new Set([currentRoleRaw.name.toLowerCase(), ...validNodes.map((n) => n.roleName.toLowerCase())]);
-  const validEdges = parsed.edges.filter(
-    (e) => validNodeNames.has(e.fromRoleName.toLowerCase()) && validNodeNames.has(e.toRoleName.toLowerCase())
-  );
-
-  // Build nodes with full role data
   const nodes: RoleNode[] = [];
-
-  // Current role
-  nodes.push({
-    id: currentRoleRaw.id,
-    name: currentRoleRaw.name,
-    category: currentRoleRaw.category,
-    seniority: currentRoleRaw.seniority,
-    description: currentRoleRaw.description,
-    tier: "current",
-  });
-
-  // Other tiers
-  for (const n of validNodes) {
-    const role = resolve(n.roleName)!;
+  for (const r of parsed.roles) {
+    const id = crypto.randomUUID();
     nodes.push({
-      id: role.id,
-      name: role.name,
-      category: role.category,
-      seniority: role.seniority,
-      description: role.description,
-      tier: n.tier,
+      id,
+      name: r.name,
+      category: r.category,
+      seniority: r.seniority,
+      description: r.description,
+      matchScore: r.matchScore,
+      tier: r.tier,
+      skillGaps: r.skillGaps,
+      quest: r.quest,
     });
   }
 
-  // Build edges
+  const nodeNameToId = new Map<string, string>();
+  for (const n of nodes) {
+    nodeNameToId.set(n.name, n.id);
+  }
+
   const edgeSet = new Set<string>();
   const edges: RoleEdge[] = [];
-  for (const e of validEdges) {
-    const fromRole = resolve(e.fromRoleName)!;
-    const toRole = resolve(e.toRoleName)!;
-    const key = `${fromRole.id}-${toRole.id}`;
+  for (const e of parsed.edges) {
+    const fromId = nodeNameToId.get(e.fromRole);
+    const toId = nodeNameToId.get(e.toRole);
+    if (!fromId || !toId) continue;
+    const key = `${fromId}-${toId}`;
     if (edgeSet.has(key)) continue;
     edgeSet.add(key);
     edges.push({
-      fromRoleId: fromRole.id,
-      toRoleId: toRole.id,
-      category: e.category,
+      fromRoleId: fromId,
+      toRoleId: toId,
+      category: "NEXT",
       requiredSkillScore: 0,
     });
   }
@@ -181,7 +202,6 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
   const graph: CareerGraph = { nodes, edges };
   const result = { graph, reasoning: parsed.reasoning || null };
 
-  // Cache
   await prisma.user.update({
     where: { id: userId },
     data: { careerMapCache: JSON.parse(JSON.stringify(result)) },

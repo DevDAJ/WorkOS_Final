@@ -147,7 +147,7 @@
             <div class="mt-3 flex flex-wrap gap-1.5 border-t border-border pt-3">
               <span class="mr-1 self-center text-xs text-muted-foreground">Gaps:</span>
               {#each job.gaps as g}
-                <Badge variant="outline" size="xs" class="text-danger">{g}</Badge>
+                <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{g}</Badge>
               {/each}
             </div>
           {/if}

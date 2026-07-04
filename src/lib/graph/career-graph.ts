@@ -9,6 +9,12 @@ export interface RoleNode {
   description: string | null;
   matchScore?: number;
   tier: "current" | "next" | "stretch" | "long-term";
+  skillGaps?: string[];
+  quest?: {
+    title: string;
+    description: string;
+    tasks: { description: string; skillName: string }[];
+  };
 }
 
 export interface RoleEdge {

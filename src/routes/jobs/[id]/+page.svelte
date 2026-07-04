@@ -226,7 +226,7 @@
               <p class="text-xs text-danger">Gaps</p>
               <div class="mt-1 flex flex-wrap gap-1">
                 {#each skillGaps as s}
-                  <Badge variant="outline" size="xs" class="text-danger">{s}</Badge>
+                  <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{s}</Badge>
                 {/each}
               </div>
             </div>

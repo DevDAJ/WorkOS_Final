@@ -49,6 +49,7 @@ model User {
   applications   Application[]
   postedJobs     Job[]      @relation("PostedJobs")
   careerMapCache Json?
+  activeQuest    Json?
 }
 
 model PersonalInfo {

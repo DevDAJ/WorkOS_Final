@@ -1,0 +1,42 @@
+{
+	"name": "livingcv",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@internationalized/date": "^3.12.2",
+		"@lucide/svelte": "^1.23.0",
+		"@sveltejs/adapter-auto": "^7.0.1",
+		"@sveltejs/adapter-cloudflare": "^7.2.9",
+		"@sveltejs/adapter-netlify": "^6.0.4",
+		"@sveltejs/kit": "^2.63.0",
+		"@sveltejs/vite-plugin-svelte": "^7.1.2",
+		"@tailwindcss/vite": "^4.3.2",
+		"@types/node": "^26.1.0",
+		"bits-ui": "^2.18.1",
+		"svelte": "^5.56.1",
+		"svelte-check": "^4.6.0",
+		"tailwind-variants": "^3.2.2",
+		"tailwindcss": "^4.3.2",
+		"typescript": "^6.0.3",
+		"vite": "^8.0.16"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.1.0",
+		"@prisma/adapter-neon": "^7.8.0",
+		"@prisma/client": "^7.8.0",
+		"clsx": "^2.1.1",
+		"dotenv": "^17.4.2",
+		"prisma": "^7.8.0",
+		"tailwind-merge": "^3.6.0",
+		"zod": "^4.4.3"
+	}
+}

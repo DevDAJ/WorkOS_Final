@@ -3,14 +3,15 @@
   import { Badge } from "$lib/components/ui/badge";
   import { Label } from "$lib/components/ui/label";
   import { Textarea } from "$lib/components/ui/textarea";
+  import * as Dialog from "$lib/components/ui/dialog";
 
   let { data } = $props();
-  let { job, application, skillGaps, strengths, matchScore } = $state(data);
+  let { job, application, skillGaps, strengths, matchScore, resume, workExps, userProjects } = $state(data);
   let step = $state<"idle" | "gaps" | "cover" | "submitted">("idle");
   let coverLetter = $state("");
 
   let gaps = $state(
-    skillGaps.map((s: string) => ({ skill: s, claimed: false, evidence: "" }))
+    skillGaps.map((s: string) => ({ skill: s, claimed: false, evidence: "", otherText: "" }))
   );
 
   const RING_RADIUS = 16;
@@ -43,10 +44,19 @@
     if (coverLetter) form.set("coverLetter", coverLetter);
     for (const g of gaps) {
       form.set(`claim_${g.skill}`, g.claimed ? "true" : "false");
-      if (g.claimed && g.evidence) form.set(`evidence_${g.skill}`, g.evidence);
+      if (g.claimed) {
+        const val = g.evidence === "__other__" ? g.otherText : g.evidence;
+        if (val) form.set(`evidence_${g.skill}`, val);
+      }
     }
     await fetch("?/apply", { method: "POST", body: form });
     step = "submitted";
+  }
+
+  let viewingResume = $state<string | null>(null);
+
+  function downloadPdf(id: string) {
+    window.open("/api/resume/" + id + "/pdf", "_blank");
   }
 
   const statusLabel: Record<string, string> = {
@@ -177,6 +187,9 @@
               {statusLabel[application.status] || application.status}
             </Badge>
           {/if}
+          {#if resume}
+            <Button onclick={() => viewingResume = resume.id} class="mt-3 w-full" size="sm" variant="outline">View Resume</Button>
+          {/if}
         </div>
       {:else if step === "cover"}
         <div class="rounded-xl border border-border bg-card p-6">
@@ -209,12 +222,35 @@
                   </button>
                 </div>
                 {#if g.claimed}
-                  <textarea
+                  <select
                     bind:value={gaps[i].evidence}
-                    placeholder="Where did you use this? (project, job, etc.)"
                     class="border-input mt-2 w-full rounded-lg border bg-transparent px-2 py-1.5 text-xs outline-none focus:border-ring"
-                    rows="2"
-                  ></textarea>
+                  >
+                    <option value="">Select where you used this...</option>
+                    {#if workExps.length}
+                      <optgroup label="Work Experience">
+                        {#each workExps as we}
+                          <option value="work_{we.id}">{we.role} at {we.company}</option>
+                        {/each}
+                      </optgroup>
+                    {/if}
+                    {#if userProjects.length}
+                      <optgroup label="Projects">
+                        {#each userProjects as p}
+                          <option value="proj_{p.id}">{p.title}</option>
+                        {/each}
+                      </optgroup>
+                    {/if}
+                    <option value="__other__">Other (type below)</option>
+                  </select>
+                  {#if gaps[i].evidence === "__other__"}
+                    <textarea
+                      bind:value={gaps[i].otherText}
+                      placeholder="Describe where you used this skill..."
+                      class="border-input mt-2 w-full rounded-lg border bg-transparent px-2 py-1.5 text-xs outline-none focus:border-ring"
+                      rows="2"
+                    ></textarea>
+                  {/if}
                 {/if}
               </div>
             {/each}
@@ -292,3 +328,20 @@
     </div>
   </div>
 </div>
+
+<Dialog.Root open={viewingResume !== null} onopenchange={(e) => { if (!e.detail) viewingResume = null; }}>
+  <Dialog.Content class="!max-w-[90vw] !w-[90vw] !h-[90vh] flex flex-col p-0 gap-0" showCloseButton={false}>
+    <div class="flex items-center justify-between border-b border-border px-5 py-3">
+      <Dialog.Title class="text-sm font-semibold text-foreground m-0">Resume</Dialog.Title>
+      <div class="flex gap-2">
+        <Button size="sm" variant="outline" onclick={() => viewingResume && downloadPdf(viewingResume)}>Download PDF</Button>
+        <Button size="sm" variant="ghost" onclick={() => viewingResume = null}>Close</Button>
+      </div>
+    </div>
+    <div class="flex-1 min-h-0">
+      {#if viewingResume}
+        <iframe src="/api/resume/{viewingResume}/html" class="h-full w-full border-0" title="Resume" />
+      {/if}
+    </div>
+  </Dialog.Content>
+</Dialog.Root>

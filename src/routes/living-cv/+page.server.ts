@@ -1,5 +1,5 @@
 import { redirect, fail } from "@sveltejs/kit";
-import { getFullCV, upsertPersonalInfo, createEducation, deleteEducation, createWorkExperience, deleteWorkExperience } from "$features/living-cv/server";
+import { getFullCV, upsertPersonalInfo, createEducation, deleteEducation, createWorkExperience, deleteWorkExperience, createProject, deleteProject } from "$features/living-cv/server";
 import { personalInfoSchema } from "$features/living-cv/schemas";
 import type { PageServerLoad, Actions } from "./$types";
 
@@ -47,6 +47,21 @@ export const actions: Actions = {
     if (!locals.user) return fail(401, { error: "Unauthorized" });
     const form = await request.formData();
     await deleteWorkExperience(form.get("id") as string, locals.user.id);
+    return { success: true };
+  },
+
+  addProject: async ({ locals, request }) => {
+    if (!locals.user) return fail(401, { error: "Unauthorized" });
+    const form = await request.formData();
+    const data = JSON.parse(form.get("data") as string);
+    await createProject(locals.user.id, data);
+    return { success: true };
+  },
+
+  deleteProject: async ({ locals, request }) => {
+    if (!locals.user) return fail(401, { error: "Unauthorized" });
+    const form = await request.formData();
+    await deleteProject(form.get("id") as string, locals.user.id);
     return { success: true };
   },
 };

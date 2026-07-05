@@ -221,6 +221,7 @@ export type UserWhereInput = {
   careerQuests?: Prisma.CareerQuestListRelationFilter
   applications?: Prisma.ApplicationListRelationFilter
   postedJobs?: Prisma.JobListRelationFilter
+  resumes?: Prisma.ResumeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -248,6 +249,7 @@ export type UserOrderByWithRelationInput = {
   careerQuests?: Prisma.CareerQuestOrderByRelationAggregateInput
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
   postedJobs?: Prisma.JobOrderByRelationAggregateInput
+  resumes?: Prisma.ResumeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -278,6 +280,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   careerQuests?: Prisma.CareerQuestListRelationFilter
   applications?: Prisma.ApplicationListRelationFilter
   postedJobs?: Prisma.JobListRelationFilter
+  resumes?: Prisma.ResumeListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -335,6 +338,7 @@ export type UserCreateInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -362,6 +366,7 @@ export type UserUncheckedCreateInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -389,6 +394,7 @@ export type UserUpdateInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -416,6 +422,7 @@ export type UserUncheckedUpdateInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -720,6 +727,20 @@ export type UserUpdateOneRequiredWithoutApplicationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplicationsInput, Prisma.UserUpdateWithoutApplicationsInput>, Prisma.UserUncheckedUpdateWithoutApplicationsInput>
 }
 
+export type UserCreateNestedOneWithoutResumesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResumesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutResumesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResumesInput
+  upsert?: Prisma.UserUpsertWithoutResumesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutResumesInput, Prisma.UserUpdateWithoutResumesInput>, Prisma.UserUncheckedUpdateWithoutResumesInput>
+}
+
 export type UserCreateWithoutPersonalInfoInput = {
   id?: string
   email: string
@@ -744,6 +765,7 @@ export type UserCreateWithoutPersonalInfoInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPersonalInfoInput = {
@@ -770,6 +792,7 @@ export type UserUncheckedCreateWithoutPersonalInfoInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPersonalInfoInput = {
@@ -812,6 +835,7 @@ export type UserUpdateWithoutPersonalInfoInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonalInfoInput = {
@@ -838,6 +862,7 @@ export type UserUncheckedUpdateWithoutPersonalInfoInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEducationInput = {
@@ -864,6 +889,7 @@ export type UserCreateWithoutEducationInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEducationInput = {
@@ -890,6 +916,7 @@ export type UserUncheckedCreateWithoutEducationInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEducationInput = {
@@ -932,6 +959,7 @@ export type UserUpdateWithoutEducationInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEducationInput = {
@@ -958,6 +986,7 @@ export type UserUncheckedUpdateWithoutEducationInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWorkExperienceInput = {
@@ -984,6 +1013,7 @@ export type UserCreateWithoutWorkExperienceInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWorkExperienceInput = {
@@ -1010,6 +1040,7 @@ export type UserUncheckedCreateWithoutWorkExperienceInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWorkExperienceInput = {
@@ -1052,6 +1083,7 @@ export type UserUpdateWithoutWorkExperienceInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWorkExperienceInput = {
@@ -1078,6 +1110,7 @@ export type UserUncheckedUpdateWithoutWorkExperienceInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectsInput = {
@@ -1104,6 +1137,7 @@ export type UserCreateWithoutProjectsInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -1130,6 +1164,7 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -1172,6 +1207,7 @@ export type UserUpdateWithoutProjectsInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -1198,6 +1234,7 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSkillsInput = {
@@ -1224,6 +1261,7 @@ export type UserCreateWithoutSkillsInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSkillsInput = {
@@ -1250,6 +1288,7 @@ export type UserUncheckedCreateWithoutSkillsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSkillsInput = {
@@ -1292,6 +1331,7 @@ export type UserUpdateWithoutSkillsInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSkillsInput = {
@@ -1318,6 +1358,7 @@ export type UserUncheckedUpdateWithoutSkillsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCertificationsInput = {
@@ -1344,6 +1385,7 @@ export type UserCreateWithoutCertificationsInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCertificationsInput = {
@@ -1370,6 +1412,7 @@ export type UserUncheckedCreateWithoutCertificationsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCertificationsInput = {
@@ -1412,6 +1455,7 @@ export type UserUpdateWithoutCertificationsInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCertificationsInput = {
@@ -1438,6 +1482,7 @@ export type UserUncheckedUpdateWithoutCertificationsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAwardsInput = {
@@ -1464,6 +1509,7 @@ export type UserCreateWithoutAwardsInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAwardsInput = {
@@ -1490,6 +1536,7 @@ export type UserUncheckedCreateWithoutAwardsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAwardsInput = {
@@ -1532,6 +1579,7 @@ export type UserUpdateWithoutAwardsInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAwardsInput = {
@@ -1558,6 +1606,7 @@ export type UserUncheckedUpdateWithoutAwardsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLanguagesInput = {
@@ -1584,6 +1633,7 @@ export type UserCreateWithoutLanguagesInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLanguagesInput = {
@@ -1610,6 +1660,7 @@ export type UserUncheckedCreateWithoutLanguagesInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLanguagesInput = {
@@ -1652,6 +1703,7 @@ export type UserUpdateWithoutLanguagesInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLanguagesInput = {
@@ -1678,6 +1730,7 @@ export type UserUncheckedUpdateWithoutLanguagesInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReferencesInput = {
@@ -1704,6 +1757,7 @@ export type UserCreateWithoutReferencesInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferencesInput = {
@@ -1730,6 +1784,7 @@ export type UserUncheckedCreateWithoutReferencesInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferencesInput = {
@@ -1772,6 +1827,7 @@ export type UserUpdateWithoutReferencesInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferencesInput = {
@@ -1798,6 +1854,7 @@ export type UserUncheckedUpdateWithoutReferencesInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSocialLinksInput = {
@@ -1824,6 +1881,7 @@ export type UserCreateWithoutSocialLinksInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSocialLinksInput = {
@@ -1850,6 +1908,7 @@ export type UserUncheckedCreateWithoutSocialLinksInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSocialLinksInput = {
@@ -1892,6 +1951,7 @@ export type UserUpdateWithoutSocialLinksInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSocialLinksInput = {
@@ -1918,6 +1978,7 @@ export type UserUncheckedUpdateWithoutSocialLinksInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1944,6 +2005,7 @@ export type UserCreateWithoutSessionsInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1970,6 +2032,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -2012,6 +2075,7 @@ export type UserUpdateWithoutSessionsInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -2038,6 +2102,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCareerMatchesInput = {
@@ -2064,6 +2129,7 @@ export type UserCreateWithoutCareerMatchesInput = {
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCareerMatchesInput = {
@@ -2090,6 +2156,7 @@ export type UserUncheckedCreateWithoutCareerMatchesInput = {
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCareerMatchesInput = {
@@ -2132,6 +2199,7 @@ export type UserUpdateWithoutCareerMatchesInput = {
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCareerMatchesInput = {
@@ -2158,6 +2226,7 @@ export type UserUncheckedUpdateWithoutCareerMatchesInput = {
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCareerQuestsInput = {
@@ -2184,6 +2253,7 @@ export type UserCreateWithoutCareerQuestsInput = {
   careerMatches?: Prisma.CareerMatchCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCareerQuestsInput = {
@@ -2210,6 +2280,7 @@ export type UserUncheckedCreateWithoutCareerQuestsInput = {
   careerMatches?: Prisma.CareerMatchUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCareerQuestsInput = {
@@ -2252,6 +2323,7 @@ export type UserUpdateWithoutCareerQuestsInput = {
   careerMatches?: Prisma.CareerMatchUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCareerQuestsInput = {
@@ -2278,6 +2350,7 @@ export type UserUncheckedUpdateWithoutCareerQuestsInput = {
   careerMatches?: Prisma.CareerMatchUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPostedJobsInput = {
@@ -2304,6 +2377,7 @@ export type UserCreateWithoutPostedJobsInput = {
   careerMatches?: Prisma.CareerMatchCreateNestedManyWithoutUserInput
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPostedJobsInput = {
@@ -2330,6 +2404,7 @@ export type UserUncheckedCreateWithoutPostedJobsInput = {
   careerMatches?: Prisma.CareerMatchUncheckedCreateNestedManyWithoutUserInput
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPostedJobsInput = {
@@ -2372,6 +2447,7 @@ export type UserUpdateWithoutPostedJobsInput = {
   careerMatches?: Prisma.CareerMatchUpdateManyWithoutUserNestedInput
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPostedJobsInput = {
@@ -2398,6 +2474,7 @@ export type UserUncheckedUpdateWithoutPostedJobsInput = {
   careerMatches?: Prisma.CareerMatchUncheckedUpdateManyWithoutUserNestedInput
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApplicationsInput = {
@@ -2424,6 +2501,7 @@ export type UserCreateWithoutApplicationsInput = {
   careerMatches?: Prisma.CareerMatchCreateNestedManyWithoutUserInput
   careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApplicationsInput = {
@@ -2450,6 +2528,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   careerMatches?: Prisma.CareerMatchUncheckedCreateNestedManyWithoutUserInput
   careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
   postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApplicationsInput = {
@@ -2492,6 +2571,7 @@ export type UserUpdateWithoutApplicationsInput = {
   careerMatches?: Prisma.CareerMatchUpdateManyWithoutUserNestedInput
   careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApplicationsInput = {
@@ -2518,6 +2598,131 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   careerMatches?: Prisma.CareerMatchUncheckedUpdateManyWithoutUserNestedInput
   careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
   postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutResumesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  personalInfo?: Prisma.PersonalInfoCreateNestedOneWithoutUserInput
+  education?: Prisma.EducationCreateNestedManyWithoutUserInput
+  workExperience?: Prisma.WorkExperienceCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillCreateNestedManyWithoutUserInput
+  certifications?: Prisma.CertificationCreateNestedManyWithoutUserInput
+  awards?: Prisma.AwardCreateNestedManyWithoutUserInput
+  languages?: Prisma.LanguageCreateNestedManyWithoutUserInput
+  references?: Prisma.ReferenceCreateNestedManyWithoutUserInput
+  socialLinks?: Prisma.SocialLinkCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  careerMatches?: Prisma.CareerMatchCreateNestedManyWithoutUserInput
+  careerQuests?: Prisma.CareerQuestCreateNestedManyWithoutUserInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
+  postedJobs?: Prisma.JobCreateNestedManyWithoutPostedByInput
+}
+
+export type UserUncheckedCreateWithoutResumesInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  passwordHash?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  personalInfo?: Prisma.PersonalInfoUncheckedCreateNestedOneWithoutUserInput
+  education?: Prisma.EducationUncheckedCreateNestedManyWithoutUserInput
+  workExperience?: Prisma.WorkExperienceUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  skills?: Prisma.SkillUncheckedCreateNestedManyWithoutUserInput
+  certifications?: Prisma.CertificationUncheckedCreateNestedManyWithoutUserInput
+  awards?: Prisma.AwardUncheckedCreateNestedManyWithoutUserInput
+  languages?: Prisma.LanguageUncheckedCreateNestedManyWithoutUserInput
+  references?: Prisma.ReferenceUncheckedCreateNestedManyWithoutUserInput
+  socialLinks?: Prisma.SocialLinkUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  careerMatches?: Prisma.CareerMatchUncheckedCreateNestedManyWithoutUserInput
+  careerQuests?: Prisma.CareerQuestUncheckedCreateNestedManyWithoutUserInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
+  postedJobs?: Prisma.JobUncheckedCreateNestedManyWithoutPostedByInput
+}
+
+export type UserCreateOrConnectWithoutResumesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+}
+
+export type UserUpsertWithoutResumesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutResumesInput, Prisma.UserUncheckedUpdateWithoutResumesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutResumesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutResumesInput, Prisma.UserUncheckedUpdateWithoutResumesInput>
+}
+
+export type UserUpdateWithoutResumesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  personalInfo?: Prisma.PersonalInfoUpdateOneWithoutUserNestedInput
+  education?: Prisma.EducationUpdateManyWithoutUserNestedInput
+  workExperience?: Prisma.WorkExperienceUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUpdateManyWithoutUserNestedInput
+  certifications?: Prisma.CertificationUpdateManyWithoutUserNestedInput
+  awards?: Prisma.AwardUpdateManyWithoutUserNestedInput
+  languages?: Prisma.LanguageUpdateManyWithoutUserNestedInput
+  references?: Prisma.ReferenceUpdateManyWithoutUserNestedInput
+  socialLinks?: Prisma.SocialLinkUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  careerMatches?: Prisma.CareerMatchUpdateManyWithoutUserNestedInput
+  careerQuests?: Prisma.CareerQuestUpdateManyWithoutUserNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
+  postedJobs?: Prisma.JobUpdateManyWithoutPostedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutResumesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  careerMapCache?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  activeQuest?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  personalInfo?: Prisma.PersonalInfoUncheckedUpdateOneWithoutUserNestedInput
+  education?: Prisma.EducationUncheckedUpdateManyWithoutUserNestedInput
+  workExperience?: Prisma.WorkExperienceUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  skills?: Prisma.SkillUncheckedUpdateManyWithoutUserNestedInput
+  certifications?: Prisma.CertificationUncheckedUpdateManyWithoutUserNestedInput
+  awards?: Prisma.AwardUncheckedUpdateManyWithoutUserNestedInput
+  languages?: Prisma.LanguageUncheckedUpdateManyWithoutUserNestedInput
+  references?: Prisma.ReferenceUncheckedUpdateManyWithoutUserNestedInput
+  socialLinks?: Prisma.SocialLinkUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  careerMatches?: Prisma.CareerMatchUncheckedUpdateManyWithoutUserNestedInput
+  careerQuests?: Prisma.CareerQuestUncheckedUpdateManyWithoutUserNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
+  postedJobs?: Prisma.JobUncheckedUpdateManyWithoutPostedByNestedInput
 }
 
 
@@ -2540,6 +2745,7 @@ export type UserCountOutputType = {
   careerQuests: number
   applications: number
   postedJobs: number
+  resumes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2557,6 +2763,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   careerQuests?: boolean | UserCountOutputTypeCountCareerQuestsArgs
   applications?: boolean | UserCountOutputTypeCountApplicationsArgs
   postedJobs?: boolean | UserCountOutputTypeCountPostedJobsArgs
+  resumes?: boolean | UserCountOutputTypeCountResumesArgs
 }
 
 /**
@@ -2667,6 +2874,13 @@ export type UserCountOutputTypeCountPostedJobsArgs<ExtArgs extends runtime.Types
   where?: Prisma.JobWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountResumesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ResumeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2693,6 +2907,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   careerQuests?: boolean | Prisma.User$careerQuestsArgs<ExtArgs>
   applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
   postedJobs?: boolean | Prisma.User$postedJobsArgs<ExtArgs>
+  resumes?: boolean | Prisma.User$resumesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2749,6 +2964,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   careerQuests?: boolean | Prisma.User$careerQuestsArgs<ExtArgs>
   applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
   postedJobs?: boolean | Prisma.User$postedJobsArgs<ExtArgs>
+  resumes?: boolean | Prisma.User$resumesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2772,6 +2988,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     careerQuests: Prisma.$CareerQuestPayload<ExtArgs>[]
     applications: Prisma.$ApplicationPayload<ExtArgs>[]
     postedJobs: Prisma.$JobPayload<ExtArgs>[]
+    resumes: Prisma.$ResumePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3192,6 +3409,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   careerQuests<T extends Prisma.User$careerQuestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$careerQuestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CareerQuestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applications<T extends Prisma.User$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   postedJobs<T extends Prisma.User$postedJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postedJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resumes<T extends Prisma.User$resumesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resumesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ResumePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3975,6 +4193,30 @@ export type User$postedJobsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.JobScalarFieldEnum | Prisma.JobScalarFieldEnum[]
+}
+
+/**
+ * User.resumes
+ */
+export type User$resumesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Resume
+   */
+  select?: Prisma.ResumeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Resume
+   */
+  omit?: Prisma.ResumeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ResumeInclude<ExtArgs> | null
+  where?: Prisma.ResumeWhereInput
+  orderBy?: Prisma.ResumeOrderByWithRelationInput | Prisma.ResumeOrderByWithRelationInput[]
+  cursor?: Prisma.ResumeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ResumeScalarFieldEnum | Prisma.ResumeScalarFieldEnum[]
 }
 
 /**

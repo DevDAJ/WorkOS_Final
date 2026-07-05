@@ -48,6 +48,7 @@ model User {
   careerQuests   CareerQuest[]
   applications   Application[]
   postedJobs     Job[]      @relation("PostedJobs")
+  resumes        Resume[]
   careerMapCache Json?
   activeQuest    Json?
 }
@@ -424,5 +425,19 @@ model Application {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
+  resume Resume?
+
   @@unique([jobId, userId])
+}
+
+model Resume {
+  id            String   @id @default(cuid())
+  applicationId String   @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  style         String   // "professional" | "creative"
+  html          String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

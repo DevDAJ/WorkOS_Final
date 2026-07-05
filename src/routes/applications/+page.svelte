@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Badge } from "$lib/components/ui/badge";
+  import * as Dialog from "$lib/components/ui/dialog";
   import { enhance } from "$app/forms";
 
   let { data } = $props();
@@ -37,10 +38,24 @@
   let editing = $state<string | null>(null);
   let editCoverLetter = $state("");
 
-  function toggleEdit(jobId: string, current: string | null) {
+  function toggleEdit(jobId: string, current: string | null | undefined) {
     if (editing === jobId) { editing = null; return; }
     editing = jobId;
     editCoverLetter = current || "";
+  }
+
+  let viewingResume = $state<string | null>(null);
+
+  async function viewResume(resumeId: string) {
+    viewingResume = resumeId;
+  }
+
+  function closeResume() {
+    viewingResume = null;
+  }
+
+  function downloadPdf(resumeId: string) {
+    window.open("/api/resume/" + resumeId + "/pdf", "_blank");
   }
 </script>
 
@@ -98,6 +113,9 @@
                 </form>
               {/if}
               <Button variant="outline" size="sm" onclick={() => toggleEdit(app.jobId, app.coverLetter)}>{editing === app.jobId ? "Close" : "Edit"}</Button>
+              {#if app.resume}
+                <Button variant="outline" size="sm" onclick={() => viewResume(app.resume.id)}>Resume</Button>
+              {/if}
             </div>
           </div>
 
@@ -123,3 +141,20 @@
     </div>
   {/if}
 </div>
+
+<Dialog.Root open={viewingResume !== null} onopenchange={(e) => { if (!e.detail) viewingResume = null; }}>
+  <Dialog.Content class="!max-w-[90vw] !w-[90vw] !h-[90vh] flex flex-col p-0 gap-0" showCloseButton={false}>
+    <div class="flex items-center justify-between border-b border-border px-5 py-3">
+      <Dialog.Title class="text-sm font-semibold text-foreground m-0">Resume</Dialog.Title>
+      <div class="flex gap-2">
+        <Button size="sm" variant="outline" onclick={() => viewingResume && downloadPdf(viewingResume)}>Download PDF</Button>
+        <Button size="sm" variant="ghost" onclick={closeResume}>Close</Button>
+      </div>
+    </div>
+    <div class="flex-1 min-h-0">
+      {#if viewingResume}
+        <iframe src="/api/resume/{viewingResume}/html" class="h-full w-full border-0" title="Resume" />
+      {/if}
+    </div>
+  </Dialog.Content>
+</Dialog.Root>

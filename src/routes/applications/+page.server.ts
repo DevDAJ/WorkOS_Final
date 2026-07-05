@@ -16,11 +16,18 @@ export const load: PageServerLoad = async ({ locals }) => {
 
   const userSkillNames = new Set(userSkills.map((s) => s.name.toLowerCase()));
 
+  const appIds = apps.map((a) => a.id);
+  const resumes = appIds.length
+    ? await prisma.resume.findMany({ where: { applicationId: { in: appIds } }, select: { id: true, style: true, applicationId: true } })
+    : [];
+  const resumeMap = new Map(resumes.map((r) => [r.applicationId, r]));
+
   const applications = apps.map((app) => {
     const jobSkills = app.job.skills.map((s) => s.toLowerCase());
     const matchedSkills = jobSkills.filter((s) => userSkillNames.has(s));
     const matchScore = jobSkills.length > 0 ? Math.round((matchedSkills.length / jobSkills.length) * 100) : 0;
-    return { ...app, matchScore };
+    const resumeInfo = resumeMap.get(app.id) || null;
+    return { ...app, matchScore, resume: resumeInfo };
   });
 
   return { applications };

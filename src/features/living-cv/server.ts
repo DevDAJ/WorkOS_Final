@@ -1,5 +1,5 @@
 import { prisma } from "$lib/server";
-import type { PersonalInfo, Education, WorkExperience, Certification, Award, Language, Reference, SocialLink } from "$generated/prisma/client";
+import type { PersonalInfo, Education, WorkExperience, Project, Certification, Award, Language, Reference, SocialLink } from "$generated/prisma/client";
 
 export async function getPersonalInfo(userId: string): Promise<PersonalInfo | null> {
   return prisma.personalInfo.findUnique({ where: { userId } });
@@ -55,6 +55,22 @@ export async function deleteWorkExperience(id: string, userId: string): Promise<
   await prisma.workExperience.delete({ where: { id, userId } });
 }
 
+export async function getProjects(userId: string): Promise<Project[]> {
+  return prisma.project.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
+}
+
+export async function createProject(userId: string, data: any): Promise<Project> {
+  return prisma.project.create({ data: { ...data, userId } });
+}
+
+export async function updateProject(id: string, userId: string, data: any): Promise<Project> {
+  return prisma.project.update({ where: { id, userId }, data });
+}
+
+export async function deleteProject(id: string, userId: string): Promise<void> {
+  await prisma.project.delete({ where: { id, userId } });
+}
+
 export async function getCertifications(userId: string): Promise<Certification[]> {
   return prisma.certification.findMany({ where: { userId }, orderBy: { date: "desc" } });
 }
@@ -76,16 +92,17 @@ export async function getSocialLinks(userId: string): Promise<SocialLink[]> {
 }
 
 export async function getFullCV(userId: string) {
-  const [personalInfo, education, workExperience, certifications, awards, languages, references, socialLinks] =
+  const [personalInfo, education, workExperience, projects, certifications, awards, languages, references, socialLinks] =
     await Promise.all([
       prisma.personalInfo.findUnique({ where: { userId } }),
       prisma.education.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
       prisma.workExperience.findMany({ where: { userId }, orderBy: { startDate: "desc" } }),
+      prisma.project.findMany({ where: { userId }, orderBy: { createdAt: "desc" } }),
       prisma.certification.findMany({ where: { userId }, orderBy: { date: "desc" } }),
       prisma.award.findMany({ where: { userId }, orderBy: { date: "desc" } }),
       prisma.language.findMany({ where: { userId } }),
       prisma.reference.findMany({ where: { userId } }),
       prisma.socialLink.findMany({ where: { userId } }),
     ]);
-  return { personalInfo, education, workExperience, certifications, awards, languages, references, socialLinks };
+  return { personalInfo, education, workExperience, projects, certifications, awards, languages, references, socialLinks };
 }

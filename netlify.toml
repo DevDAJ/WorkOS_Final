@@ -1,3 +1,9 @@
 [build]
   command = "npm run build"
   publish = "build"
+
+# ponytail: static assets are content-hashed by Vite, safe to cache forever
+[[headers]]
+  for = "/_app/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

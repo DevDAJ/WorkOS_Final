@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     locationType: url.searchParams.get("locationType") || undefined,
     type: url.searchParams.get("type") || undefined,
     sort: (url.searchParams.get("sort") || "newest") as any,
+    page: Number(url.searchParams.get("page")) || 1,
   };
 
   const [jobData, userSkills] = await Promise.all([
@@ -41,6 +42,3 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   return { jobs };
 };
 
-export const config = {
-  isr: { expiration: 60 },
-};

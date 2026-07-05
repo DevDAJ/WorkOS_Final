@@ -54,12 +54,15 @@ export async function getJobs(filters: JobFilters) {
   if (filters.sort === "salary_high") orderBy = { salaryMax: "desc" };
   else if (filters.sort === "salary_low") orderBy = { salaryMin: "asc" };
 
+  const page = Math.max(1, filters.page ?? 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
   const [jobs, total] = await Promise.all([
-    prisma.job.findMany({ where, orderBy }),
+    prisma.job.findMany({ where, orderBy, skip, take: PAGE_SIZE }),
     prisma.job.count({ where }),
   ]);
 
-  return { jobs, total, page: 1, totalPages: 1 };
+  return { jobs, total, page, totalPages: Math.ceil(total / PAGE_SIZE) };
 }
 
 export async function getJob(id: string) {

@@ -5,6 +5,24 @@ import { randomBytes, createHash } from "node:crypto";
 const SESSION_COOKIE = "session";
 const SESSION_EXPIRY = 30 * 24 * 60 * 60 * 1000;
 
+// ponytail: in-memory session cache, invalidate-on-delete + 5min TTL
+const sessionCache = new Map<string, { user: User; expiresAt: Date; cachedAt: number }>();
+const CACHE_TTL = 5 * 60 * 1000;
+
+function getCached(token: string): User | null {
+  const entry = sessionCache.get(token);
+  if (!entry) return null;
+  if (Date.now() - entry.cachedAt > CACHE_TTL || entry.expiresAt < new Date()) {
+    sessionCache.delete(token);
+    return null;
+  }
+  return entry.user;
+}
+
+function setCached(token: string, user: User, expiresAt: Date) {
+  sessionCache.set(token, { user, expiresAt, cachedAt: Date.now() });
+}
+
 export function generateSessionToken(): string {
   return randomBytes(32).toString("base64url");
 }
@@ -17,18 +35,26 @@ export async function createSession(token: string, userId: string): Promise<stri
 }
 
 export async function validateSession(token: string): Promise<User | null> {
+  const cached = getCached(token);
+  if (cached) return cached;
+
   const session = await prisma.session.findUnique({
     where: { id: token },
     include: { user: true },
   });
   if (!session || session.expiresAt < new Date()) {
-    if (session) await prisma.session.delete({ where: { id: token } });
+    if (session) {
+      sessionCache.delete(token);
+      await prisma.session.delete({ where: { id: token } });
+    }
     return null;
   }
+  setCached(token, session.user, session.expiresAt);
   return session.user;
 }
 
 export async function deleteSession(token: string): Promise<void> {
+  sessionCache.delete(token);
   await prisma.session.delete({ where: { id: token } });
 }
 

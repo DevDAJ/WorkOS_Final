@@ -86,6 +86,10 @@ export async function loginUser(email: string, password: string): Promise<User |
   return hash === user.passwordHash ? user : null;
 }
 
+export async function updateUser(userId: string, data: { name?: string; image?: string }): Promise<User> {
+  return prisma.user.update({ where: { id: userId }, data });
+}
+
 // ponytail: sha256 for dev speed, upgrade to bcrypt/argon2 before prod
 function hashPassword(password: string): string {
   return createHash("sha256").update(password).digest("base64url");

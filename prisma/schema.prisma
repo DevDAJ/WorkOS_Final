@@ -237,6 +237,8 @@ enum RoleCategory {
 }
 
 enum SeniorityLevel {
+  INTERN
+  FRESHGRAD
   JUNIOR
   MID
   SENIOR

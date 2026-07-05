@@ -1,6 +1,42 @@
 import { prisma } from "$lib/server";
 import { callAI } from "./client";
 import type { CareerGraph, RoleNode, RoleEdge } from "$lib/graph/career-graph";
+import { seniorityRank } from "$lib/graph/layout";
+
+function inferJobTitle(skills: any[], education: any[]): string {
+  if (skills.length > 0) {
+    const counts: Record<string, number> = {};
+    for (const s of skills) {
+      const cat = (s.category || "OTHER").toLowerCase();
+      counts[cat] = (counts[cat] || 0) + 1;
+    }
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0];
+    const roleMap: Record<string, string> = {
+      frontend: "Frontend Developer",
+      backend: "Backend Developer",
+      fullstack: "Fullstack Developer",
+      devops: "DevOps Engineer",
+      data: "Data Analyst",
+      ml: "Machine Learning Engineer",
+      mobile: "Mobile Developer",
+      design: "Designer",
+      pm: "Product Manager",
+      qa: "QA Engineer",
+      sre: "SRE Engineer",
+      security: "Security Engineer",
+    };
+    if (top && roleMap[top]) return roleMap[top];
+  }
+  if (education.length > 0) {
+    const field = ((education[0] as any).field || "").toLowerCase();
+    if (field.includes("computer") || field.includes("software") || field.includes("engineering"))
+      return "Software Developer";
+    if (field.includes("design")) return "Designer";
+    if (field.includes("business") || field.includes("finance")) return "Analyst";
+    if (field.includes("data") || field.includes("math")) return "Data Analyst";
+  }
+  return "Software Developer";
+}
 
 interface AIQuestTask {
   description: string;
@@ -42,8 +78,8 @@ const SYSTEM_PROMPT = `You are a career path architect AI. Design a personalized
 Based on the user's profile, determine their current seniority level from their work history. Then:
 
 1. Generate roles at their current seniority level — include:
-   Their actual current job title (exact match from work history)
-   Lateral moves in related fields (e.g. Frontend Engineer → UI/UX Designer)
+   Their actual current job title (exact match from work history) — this MUST have tier "current" and matchScore 95-100
+   Lateral moves in related fields (e.g. Frontend Engineer → UI/UX Designer) — these have tier "jump"
 
 2. Generate roles at the NEXT seniority level (one step up from their current level)
 
@@ -59,6 +95,10 @@ RULES:
 - Generate realistic, specific role names (e.g. "Senior Frontend Engineer", not "Role 1")
 - Each role must have a unique name
 - 2-4 roles per tier
+- The user's actual current job (from "Current job" in profile) goes in "current" tier with matchScore 95-100
+- There MUST be exactly ONE role with tier "current". Other roles at the same seniority get tier "jump".
+- Seniority levels: INTERN (student), FRESHGRAD (no professional exp or <1 year), JUNIOR (1-3 years exp), MID (3-5 years), SENIOR (5+ years), STAFF, PRINCIPAL. Choose accurately based on work history.
+- The quest for a current-tier role should focus on growth/deepening, NOT on "qualifying" for the role
 - matchScore: 0-100 based on how well the user's skills overlap with this role
 - skillGaps: specific skills the user needs to develop for this role
 
@@ -70,14 +110,14 @@ Return ONLY JSON:
     {
       "name": "exact role name",
       "category": "FRONTEND|BACKEND|DEVOPS|FULLSTACK|DATA|ML|MOBILE|DESIGN|PM|QA|SRE|SECURITY|OTHER",
-      "seniority": "JUNIOR|MID|SENIOR|STAFF|PRINCIPAL",
+      "seniority": "INTERN|FRESHGRAD|JUNIOR|MID|SENIOR|STAFF|PRINCIPAL",
       "description": "1-2 sentence description of the role",
       "matchScore": 75,
       "skillGaps": ["skill1", "skill2"],
-      "tier": "current|next",
+      "tier": "current|jump|next",
       "quest": {
         "title": "Short motivating title",
-        "description": "Why this role is a good next step",
+        "description": "How to grow in this role (current), a lateral move worth exploring (jump), or why it's a good next step (next)",
         "tasks": [
           { "description": "Build a project that demonstrates X", "skillName": "X" }
         ]
@@ -90,18 +130,20 @@ Return ONLY JSON:
   "reasoning": "2-3 sentence explanation of this career path"
 }`;
 
-export async function generateAICareerMap(userId: string): Promise<{ graph: CareerGraph; reasoning: string | null }> {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { careerMapCache: true },
-  });
-  if (user?.careerMapCache) {
+export async function generateAICareerMap(userId: string, force?: boolean): Promise<{ graph: CareerGraph; reasoning: string | null }> {
+  if (!force) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { careerMapCache: true },
+    });
+    if (user?.careerMapCache) {
     const cached = typeof user.careerMapCache === "string"
       ? JSON.parse(user.careerMapCache)
       : user.careerMapCache;
     if (cached?.graph?.nodes?.length && cached?.graph?.edges) {
       return cached;
     }
+  }
   }
 
   const [workHistory, skills, projects, education, certifications, personalInfo] = await Promise.all([
@@ -121,9 +163,14 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
   const currentJob = workHistory.find((w: any) => w.current);
   const allRoles = workHistory.map((w: any) => w.role).filter(Boolean);
 
+  let currentJobTitle = currentJob?.role || personalInfo?.title;
+  if (!currentJobTitle && (skills.length || education.length)) {
+    currentJobTitle = inferJobTitle(skills, education);
+  }
+
   const userPrompt = [
     `USER PROFILE:`,
-    `Current job: ${currentJob?.role || personalInfo?.title || "Unknown"}`,
+    `Current job: ${currentJobTitle || "Unknown"}`,
     personalInfo?.summary ? `Summary: ${personalInfo.summary}` : null,
     ``,
     `ALL ROLES HELD:`,
@@ -175,6 +222,64 @@ export async function generateAICareerMap(userId: string): Promise<{ graph: Care
       skillGaps: r.skillGaps,
       quest: r.quest,
     });
+  }
+
+  if (currentJobTitle) {
+    const cjt = currentJobTitle.toLowerCase();
+    const existing = nodes.find((n) => n.name.toLowerCase() === cjt)
+      || nodes.find((n) => cjt.includes(n.name.toLowerCase()) && n.name.toLowerCase() !== cjt)
+      || nodes.find((n) => n.name.toLowerCase().includes(cjt));
+    if (existing) {
+      existing.tier = "current";
+      existing.matchScore = undefined;
+      const currentRank = seniorityRank(existing.seniority);
+      for (const n of nodes) {
+        if (n !== existing && n.tier === "current") {
+          n.tier = seniorityRank(n.seniority) > currentRank ? "next" : "jump";
+        }
+      }
+    } else {
+      const ref = nodes.find((n) => n.tier !== "current" && n.tier !== "next") || nodes[0];
+      const fallbackSeniority = ref?.seniority || "FRESHGRAD";
+      const currentRank = seniorityRank(fallbackSeniority);
+      for (const n of nodes) {
+        if (n.tier === "current") {
+          n.tier = seniorityRank(n.seniority) > currentRank ? "next" : "jump";
+        }
+      }
+      nodes.unshift({
+        id: crypto.randomUUID(),
+        name: currentJobTitle,
+        category: ref?.category || "OTHER",
+        seniority: fallbackSeniority,
+        description: "Current role",
+        tier: "current",
+        skillGaps: [],
+      });
+    }
+  }
+
+  const totalYears = workHistory.reduce((sum: number, w: any) => {
+    if (!w.startDate) return sum;
+    const end = w.endDate ? new Date(w.endDate) : new Date();
+    return sum + (end.getTime() - new Date(w.startDate).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+  }, 0);
+  if (totalYears < 1) {
+    for (const n of nodes) {
+      if (n.tier === "current" && n.seniority.toUpperCase() === "JUNIOR") {
+        n.seniority = "FRESHGRAD";
+      }
+    }
+  }
+
+  const current = nodes.find((n) => n.tier === "current");
+  if (current) {
+    const cRank = seniorityRank(current.seniority);
+    for (const n of nodes) {
+      if (n !== current && n.tier === "jump" && seniorityRank(n.seniority) > cRank) {
+        n.tier = "next";
+      }
+    }
   }
 
   const nodeNameToId = new Map<string, string>();

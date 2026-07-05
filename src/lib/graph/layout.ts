@@ -1,12 +1,14 @@
-export const TIER_ORDER = ["current", "next", "stretch", "long-term"];
+export const TIER_ORDER = ["current", "jump", "next", "stretch", "long-term"];
 
 const SENIORITY_RANK: Record<string, number> = {
-  junior: 0,
-  mid: 1,
-  senior: 2,
-  lead: 3,
-  staff: 4,
-  principal: 5,
+  intern: 0,
+  freshgrad: 1,
+  junior: 2,
+  mid: 3,
+  senior: 4,
+  lead: 5,
+  staff: 6,
+  principal: 7,
 };
 
 export function seniorityRank(s: string): number {

@@ -1,7 +1,7 @@
 // ponytail: 10 core roles to start, expand as needed
 // ponytail: enum values are strings at runtime, types from generated path
 export type RoleCategory = "FRONTEND" | "BACKEND" | "DEVOPS" | "FULLSTACK" | "DATA" | "ML" | "MOBILE" | "DESIGN" | "PM" | "QA" | "SRE" | "SECURITY" | "OTHER";
-export type SeniorityLevel = "JUNIOR" | "MID" | "SENIOR" | "STAFF" | "PRINCIPAL";
+export type SeniorityLevel = "INTERN" | "FRESHGRAD" | "JUNIOR" | "MID" | "SENIOR" | "STAFF" | "PRINCIPAL";
 export type EdgeCategory = "NEXT" | "STRETCH" | "LONG_TERM";
 
 export interface RoleSeed {

@@ -52,6 +52,8 @@ export type RoleCategory = (typeof RoleCategory)[keyof typeof RoleCategory]
 
 
 export const SeniorityLevel = {
+  INTERN: 'INTERN',
+  FRESHGRAD: 'FRESHGRAD',
   JUNIOR: 'JUNIOR',
   MID: 'MID',
   SENIOR: 'SENIOR',

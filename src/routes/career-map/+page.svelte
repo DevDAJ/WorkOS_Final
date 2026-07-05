@@ -7,12 +7,16 @@
 
   let { data } = $props();
   let { previousRoleNames } = $state(data);
-  let graph = $state<CareerGraph | null>(data.graph as any);
+  let graph = $state<CareerGraph | null>(data.graph?.nodes?.length ? data.graph as any : null);
   let aiError = $state(false);
   let aiReasoning = $state<string | null>(null);
   let creatingQuest = $state(false);
+  let loading = $state(!graph);
+  let regenerating = $state(false);
 
   $effect(() => {
+    if (data.graph?.nodes?.length) return;
+    loading = true;
     const ctrl = new AbortController();
     fetch("/api/ai/career-map", { signal: ctrl.signal })
       .then((r) => r.json())
@@ -22,7 +26,8 @@
           aiReasoning = result.reasoning || null;
         }
       })
-      .catch(() => { aiError = true; });
+      .catch(() => { aiError = true; })
+      .finally(() => { loading = false; });
     return () => ctrl.abort();
   });
 
@@ -30,7 +35,7 @@
   const currentRank = currentRole ? seniorityRank(currentRole.seniority) : -1;
 
   function matchesPrevious(name: string): boolean {
-    const n = name.toLowerCase().replace(/^(junior|mid|senior|staff|principal)\s+/, "");
+    const n = name.toLowerCase().replace(/^(intern|fresh\s*grad|junior|mid|senior|staff|principal)\s+/, "");
     return (previousRoleNames as string[]).some((pr) => {
       const p = pr.toLowerCase();
       return n === p || n.includes(p) || p.includes(n);
@@ -56,6 +61,26 @@
     }).filter((r): r is NonNullable<typeof r> => r !== null);
   });
 
+  async function handleRegenerate() {
+    regenerating = true;
+    loading = true;
+    aiError = false;
+    aiReasoning = null;
+    try {
+      const res = await fetch("/api/ai/career-map?refresh=true");
+      const result = await res.json();
+      if (result.graph) {
+        graph = result.graph;
+        aiReasoning = result.reasoning || null;
+      }
+    } catch {
+      aiError = true;
+    } finally {
+      regenerating = false;
+      loading = false;
+    }
+  }
+
   async function handlePathToUnlock(node: any) {
     if (!node.quest) return;
     creatingQuest = true;
@@ -80,12 +105,13 @@
   }
 
   const SENIORITY_LABELS: Record<string, string> = {
+    intern: "Intern", freshgrad: "Fresh Grad",
     junior: "Junior", mid: "Mid", senior: "Senior",
     lead: "Lead", staff: "Staff", principal: "Principal",
   };
 
   const TIER_LABELS: Record<string, string> = {
-    current: "Current", next: "Next", stretch: "Stretch", "long-term": "Long Term",
+    current: "Current", jump: "Jump", next: "Next", stretch: "Stretch", "long-term": "Long Term",
   };
 
   const RING_RADIUS = 13;
@@ -105,6 +131,7 @@
 
   function tierBorder(node: any): string {
     if (node.tier === "current") return "ring-2 ring-tier-current";
+    if (node.tier === "jump") return "ring-1 ring-tier-jump/40";
     if (node.tier === "next") return "ring-1 ring-tier-next/40";
     return "";
   }
@@ -112,8 +139,15 @@
 
 <div class="mx-auto max-w-5xl px-4 py-8">
   <header class="mb-6">
-    <h1 class="text-2xl font-bold text-foreground sm:text-3xl">Career Map</h1>
-    <p class="mt-1 text-sm text-muted-foreground">Your career progression tree</p>
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-foreground sm:text-3xl">Career Map</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Your career progression tree</p>
+      </div>
+      <Button variant="outline" size="sm" disabled={regenerating} onclick={handleRegenerate}>
+        {regenerating ? "Regenerating..." : "Regenerate"}
+      </Button>
+    </div>
     {#if aiError}
       <p class="mt-3 text-sm text-danger">Could not generate AI career map.</p>
     {:else if aiReasoning}
@@ -139,9 +173,11 @@
                       <div class="flex-1 min-w-0">
                         <div class="truncate text-sm font-medium text-foreground">{node.name}</div>
                         <div class="mt-0.5 flex flex-wrap items-center gap-1">
-                          <Badge variant="outline" size="xs">{node.category}</Badge>
+                          <Badge variant="outline" size="xs" class="whitespace-normal max-w-28">{node.category}</Badge>
                           {#if node.tier === 'current'}
                             <Badge variant="outline" size="xs" class="bg-brand/10 text-brand border-brand/30">Current</Badge>
+                          {:else if node.tier === 'jump'}
+                            <Badge variant="outline" size="xs" class="bg-amber-500/10 text-amber-600 border-amber-500/30 dark:text-amber-400">Jump</Badge>
                           {:else if node.tier === 'next'}
                             <Badge variant="outline" size="xs" class="bg-success/10 text-success border-success/30">Next</Badge>
                           {:else if node.tier === 'stretch'}
@@ -151,7 +187,7 @@
                           {/if}
                         </div>
                       </div>
-                      {#if node.matchScore !== undefined}
+                      {#if node.matchScore !== undefined && node.tier !== 'current'}
                         <div class="relative size-9 shrink-0 sm:size-10">
                           <svg viewBox="0 0 32 32" class="size-9 -rotate-90 sm:size-10">
                             <circle cx="16" cy="16" r={RING_RADIUS} fill="none" stroke-width="3" class="stroke-muted" opacity="0.15"/>
@@ -176,13 +212,13 @@
                           <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-danger">Requirements</p>
                           <div class="flex flex-wrap gap-1.5">
                             {#each node.skillGaps as gap}
-                              <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{gap}</Badge>
+                              <Badge variant="secondary" size="xs" class="h-auto overflow-visible whitespace-normal break-words text-center max-w-32 bg-danger/10 text-danger border-danger/20">{gap}</Badge>
                             {/each}
                           </div>
                         </div>
                       {/if}
 
-                      {#if node.matchScore !== undefined}
+                      {#if node.matchScore !== undefined && node.tier !== 'current'}
                         <div>
                           <div class="mb-1 flex items-center justify-between text-sm">
                             <span class="text-muted-foreground">Match</span>
@@ -219,36 +255,43 @@
           {/each}
         </div>
       {:else}
-        <div class="space-y-1" aria-hidden="true">
-          {#each ['Junior', 'Mid', 'Senior'] as tier, i}
-            <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
-              <div class="shrink-0 pt-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:w-20 sm:pt-3 sm:text-right">
-                {tier}
-              </div>
-              <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap">
-                {#each [0, 1] as _}
-                  <div class="flex-1 min-w-0 rounded-lg border bg-card p-3 sm:basis-[200px]">
-                    <div class="flex items-center gap-3">
-                      <div class="flex-1 min-w-0 space-y-2">
-                        <div class="skeleton-shimmer h-3.5 w-3/4 rounded"></div>
-                        <div class="flex items-center gap-1.5">
-                          <div class="skeleton-shimmer h-3.5 w-16 rounded-full"></div>
-                          <div class="skeleton-shimmer h-2.5 w-8 rounded"></div>
+        {#if loading}
+          <div class="flex flex-col items-center justify-center py-16">
+            <div class="size-8 animate-spin rounded-full border-2 border-brand border-t-transparent" role="status"></div>
+            <p class="mt-4 text-sm text-muted-foreground">Generating your career map...</p>
+          </div>
+        {:else}
+          <div class="space-y-1" aria-hidden="true">
+            {#each ['Intern', 'Fresh Grad', 'Junior', 'Mid', 'Senior'] as tier, i}
+              <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+                <div class="shrink-0 pt-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:w-20 sm:pt-3 sm:text-right">
+                  {tier}
+                </div>
+                <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  {#each [0, 1] as _}
+                    <div class="flex-1 min-w-0 rounded-lg border bg-card p-3 sm:basis-[200px]">
+                      <div class="flex items-center gap-3">
+                        <div class="flex-1 min-w-0 space-y-2">
+                          <div class="skeleton-shimmer h-3.5 w-3/4 rounded"></div>
+                          <div class="flex items-center gap-1.5">
+                            <div class="skeleton-shimmer h-3.5 w-16 rounded-full"></div>
+                            <div class="skeleton-shimmer h-2.5 w-8 rounded"></div>
+                          </div>
                         </div>
+                        <div class="skeleton-shimmer size-9 shrink-0 rounded-full sm:size-10"></div>
                       </div>
-                      <div class="skeleton-shimmer size-9 shrink-0 rounded-full sm:size-10"></div>
                     </div>
-                  </div>
-                {/each}
+                  {/each}
+                </div>
               </div>
-            </div>
-            {#if i < 2}
-              <div class="flex justify-center py-1" aria-hidden="true">
-                <div class="tier-line h-8 sm:h-10"></div>
-              </div>
-            {/if}
-          {/each}
-        </div>
+              {#if i < 2}
+                <div class="flex justify-center py-1" aria-hidden="true">
+                  <div class="tier-line h-8 sm:h-10"></div>
+                </div>
+              {/if}
+            {/each}
+          </div>
+        {/if}
       {/if}
     </Card.Content>
   </Card.Root>

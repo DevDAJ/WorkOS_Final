@@ -8,7 +8,7 @@ export interface RoleNode {
   seniority: string;
   description: string | null;
   matchScore?: number;
-  tier: "current" | "next" | "stretch" | "long-term";
+  tier: "current" | "jump" | "next" | "stretch" | "long-term";
   skillGaps?: string[];
   quest?: {
     title: string;

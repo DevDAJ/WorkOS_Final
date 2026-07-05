@@ -1,6 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit";
 import { prisma } from "$lib/server";
-import { loginUser, generateSessionToken, createSession } from "$lib/server/auth";
+import { loginUser, generateSessionToken, createSession } from "$features/auth/server";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {

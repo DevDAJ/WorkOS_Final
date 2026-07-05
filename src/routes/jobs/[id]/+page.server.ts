@@ -1,7 +1,7 @@
 import { prisma } from "$lib/server";
 import type { PageServerLoad, Actions } from "./$types";
 import { error, redirect } from "@sveltejs/kit";
-import { getJob, applyToJob, getApplicationStatus } from "$lib/server/jobs";
+import { getJob, applyToJob, getApplicationStatus } from "$features/jobs/server";
 
 export const load: PageServerLoad = async ({ params, locals }) => {
   const job = await getJob(params.id);

@@ -1,5 +1,5 @@
 import { fail, redirect } from "@sveltejs/kit";
-import { registerUser, generateSessionToken, createSession, getSessionCookie } from "$lib/server/auth";
+import { registerUser, generateSessionToken, createSession, getSessionCookie } from "$features/auth/server";
 import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {

@@ -2,7 +2,7 @@ import {
   getSessionTokenFromRequest,
   validateSession,
   getSessionCookie,
-} from "$lib/server/auth";
+} from "$features/auth/server";
 
 export const handle = async ({ event, resolve }) => {
   const token = getSessionTokenFromRequest(event.request);

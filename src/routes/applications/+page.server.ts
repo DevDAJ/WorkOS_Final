@@ -1,6 +1,6 @@
 import { prisma } from "$lib/server";
 import { redirect } from "@sveltejs/kit";
-import { getUserApplications, withdrawApplication, updateApplication } from "$lib/server/jobs";
+import { getUserApplications, withdrawApplication, updateApplication } from "$features/jobs/server";
 import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {

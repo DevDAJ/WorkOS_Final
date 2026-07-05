@@ -18,6 +18,8 @@ export async function seedJobsOnce() {
   seeded = true;
 }
 
+const PAGE_SIZE = 10;
+
 export interface JobFilters {
   search?: string;
   category?: string;
@@ -27,6 +29,7 @@ export interface JobFilters {
   salaryMin?: number;
   salaryMax?: number;
   sort?: "newest" | "salary_high" | "salary_low";
+  page?: number;
 }
 
 export async function getJobs(filters: JobFilters) {
@@ -52,11 +55,11 @@ export async function getJobs(filters: JobFilters) {
   else if (filters.sort === "salary_low") orderBy = { salaryMin: "asc" };
 
   const [jobs, total] = await Promise.all([
-    prisma.job.findMany({ where, orderBy, take: 50 }),
+    prisma.job.findMany({ where, orderBy }),
     prisma.job.count({ where }),
   ]);
 
-  return { jobs, total };
+  return { jobs, total, page: 1, totalPages: 1 };
 }
 
 export async function getJob(id: string) {
@@ -67,7 +70,15 @@ export async function applyToJob(jobId: string, userId: string, coverLetter?: st
   const existing = await prisma.application.findUnique({
     where: { jobId_userId: { jobId, userId } },
   });
-  if (existing) return existing;
+  if (existing) {
+    if (existing.status === "WITHDRAWN") {
+      return prisma.application.update({
+        where: { id: existing.id },
+        data: { status: "PENDING", coverLetter: coverLetter ?? existing.coverLetter },
+      });
+    }
+    return existing;
+  }
 
   const [application] = await Promise.all([
     prisma.application.create({
@@ -80,6 +91,20 @@ export async function applyToJob(jobId: string, userId: string, coverLetter?: st
   ]);
 
   return application;
+}
+
+export async function withdrawApplication(jobId: string, userId: string) {
+  return prisma.application.update({
+    where: { jobId_userId: { jobId, userId } },
+    data: { status: "WITHDRAWN" },
+  });
+}
+
+export async function updateApplication(jobId: string, userId: string, data: Prisma.ApplicationUpdateInput) {
+  return prisma.application.update({
+    where: { jobId_userId: { jobId, userId } },
+    data,
+  });
 }
 
 export async function getUserApplications(userId: string) {

@@ -5,7 +5,7 @@
   import { Textarea } from "$lib/components/ui/textarea";
 
   let { data } = $props();
-  let { job, application, skillGaps } = $state(data);
+  let { job, application, skillGaps, strengths, matchScore } = $state(data);
   let step = $state<"idle" | "gaps" | "cover" | "submitted">("idle");
   let coverLetter = $state("");
 
@@ -13,8 +13,13 @@
     skillGaps.map((s: string) => ({ skill: s, claimed: false, evidence: "" }))
   );
 
-  let userSkills = $state(
-    job.skills.filter((s: string) => !skillGaps.includes(s))
+  const RING_RADIUS = 16;
+  const RING_CIRC = 2 * Math.PI * RING_RADIUS;
+
+  const scoreColor = $derived(
+    matchScore >= 60 ? "text-success stroke-success" :
+    matchScore >= 40 ? "text-warning stroke-warning" :
+    "text-danger stroke-danger"
   );
 
   function formatSalary(min?: number | null, max?: number | null) {
@@ -24,6 +29,14 @@
     if (min) return `From ${fmt(min)}`;
     return `Up to ${fmt(max!)}`;
   }
+
+  function formatType(t: string): string {
+    return t.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  const LOCATION_LABELS: Record<string, string> = {
+    ON_SITE: "On-site", REMOTE: "Remote", HYBRID: "Hybrid",
+  };
 
   async function submitApplication() {
     const form = new FormData();
@@ -75,14 +88,14 @@
         <h1 class="mt-4 text-2xl font-bold text-foreground sm:text-3xl">{job.title}</h1>
         <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
           {#if job.location}<span>{job.location}</span>{/if}
-          <span class="rounded bg-muted px-1.5 py-0.5 text-xs font-medium">{job.locationType}</span>
+          <span class="rounded bg-muted px-1.5 py-0.5 text-xs font-medium">{LOCATION_LABELS[job.locationType] || job.locationType}</span>
           {#if job.salaryMin || job.salaryMax}
             <span class="font-semibold text-foreground">{formatSalary(job.salaryMin, job.salaryMax)}</span>
           {/if}
         </div>
       </div>
       <div class="shrink-0">
-        <Badge variant="outline">{job.type.replace("_", " ")}</Badge>
+        <Badge variant="outline">{formatType(job.type)}</Badge>
       </div>
     </div>
 
@@ -90,7 +103,7 @@
       <Badge variant="secondary" class="text-xs">{job.seniority}</Badge>
       <Badge variant="secondary" class="text-xs">{job.category}</Badge>
       {#each job.skills as skill}
-        <Badge variant="ghost" class="text-xs">{skill}</Badge>
+        <Badge variant="outline" class="text-xs">{skill}</Badge>
       {/each}
     </div>
   </div>
@@ -144,7 +157,16 @@
     </div>
 
     <div class="space-y-4">
-      {#if application || step === "submitted"}
+      {#if application?.status === "WITHDRAWN"}
+        <div class="rounded-xl border border-border bg-card p-6 text-center">
+          <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M12 3v6h6"/></svg>
+          </div>
+          <p class="font-medium text-foreground">Application withdrawn</p>
+          <p class="mt-1 text-xs text-muted-foreground">You can re-apply at any time.</p>
+          <Button onclick={() => step = skillGaps.length > 0 ? "gaps" : "cover"} class="mt-4 w-full">Re-apply</Button>
+        </div>
+      {:else if application || step === "submitted"}
         <div class="rounded-xl border border-border bg-card p-6 text-center">
           <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-success/10">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>
@@ -209,29 +231,39 @@
       {/if}
 
       <div class="rounded-xl border border-border bg-card p-6">
-        <h3 class="text-sm font-semibold text-foreground">Skill match</h3>
-        <div class="mt-3 space-y-3">
-          {#if userSkills.length}
-            <div>
-              <p class="text-xs text-muted-foreground">Matched</p>
-              <div class="mt-1 flex flex-wrap gap-1">
-                {#each userSkills as s}
+        <div class="flex items-center gap-3">
+          <div class="relative size-12 shrink-0">
+            <svg viewBox="0 0 40 40" class="size-12 -rotate-90">
+              <circle cx="20" cy="20" r={RING_RADIUS} fill="none" stroke-width="4" class="stroke-muted" opacity="0.15"/>
+              <circle cx="20" cy="20" r={RING_RADIUS} fill="none" stroke-width="4"
+                stroke-dasharray={RING_CIRC} stroke-dashoffset={RING_CIRC * (1 - matchScore / 100)}
+                stroke-linecap="round" class={scoreColor} style="transition: stroke-dashoffset 0.6s"/>
+            </svg>
+            <span class="absolute inset-0 flex items-center justify-center text-xs font-bold {scoreColor.split(' ')[0]}">{matchScore}</span>
+          </div>
+          <div>
+            <p class="font-semibold text-foreground">Skill match</p>
+            <Badge variant="outline" size="xs" class="mt-0.5 {scoreColor.split(' ')[0]} border-current">{matchScore}% matched</Badge>
+          </div>
+        </div>
+        {#if strengths.length || skillGaps.length}
+          <div class="mt-3 space-y-2">
+            {#if strengths.length}
+              <div class="flex flex-wrap gap-1">
+                {#each strengths as s}
                   <Badge variant="secondary" size="xs" class="text-success">{s}</Badge>
                 {/each}
               </div>
-            </div>
-          {/if}
-          {#if skillGaps.length}
-            <div>
-              <p class="text-xs text-danger">Gaps</p>
-              <div class="mt-1 flex flex-wrap gap-1">
+            {/if}
+            {#if skillGaps.length}
+              <div class="flex flex-wrap gap-1">
                 {#each skillGaps as s}
                   <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{s}</Badge>
                 {/each}
               </div>
-            </div>
-          {/if}
-        </div>
+            {/if}
+          </div>
+        {/if}
       </div>
 
       <div class="rounded-xl border border-border bg-card p-6">

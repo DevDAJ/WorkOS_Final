@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     return (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0);
   });
 
-  return { jobs, total: jobData.total };
+  return { jobs };
 };
 
 export const config = {

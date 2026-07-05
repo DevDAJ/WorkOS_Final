@@ -20,6 +20,7 @@
     { href: "/living-cv", label: "Living CV" },
     { href: "/career-map", label: "Career Map" },
     { href: "/career-quest", label: "Career Quests" },
+    { href: "/applications", label: "Applications" },
   ];
 </script>
 

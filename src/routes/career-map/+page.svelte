@@ -3,12 +3,11 @@
   import * as Card from "$lib/components/ui/card";
   import { Badge } from "$lib/components/ui/badge";
   import { seniorityRank } from "$lib/graph/layout";
-  import type { CareerGraph, RoleNode } from "$lib/graph/career-graph";
+  import type { CareerGraph } from "$lib/graph/career-graph";
 
   let { data } = $props();
   let { previousRoleNames } = $state(data);
   let graph = $state<CareerGraph | null>(data.graph as any);
-  let selectedRole = $state<RoleNode | null>(null);
   let aiError = $state(false);
   let aiReasoning = $state<string | null>(null);
   let creatingQuest = $state(false);
@@ -26,11 +25,6 @@
       .catch(() => { aiError = true; });
     return () => ctrl.abort();
   });
-
-  const tierLabels: Record<string, string> = {
-    current: "Current",
-    next: "Next Role",
-  };
 
   const currentRole = graph?.nodes.find((n: any) => n.tier === "current");
   const currentRank = currentRole ? seniorityRank(currentRole.seniority) : -1;
@@ -58,13 +52,7 @@
         ? nodes.filter((n: any) => matchesPrevious(n.name))
         : nodes;
       if (filtered.length === 0) return null;
-      let xOffset = 0;
-      let zIndex = 100;
-      if (currentRank >= 0) {
-        if (rank < currentRank) { xOffset = -1; zIndex = 70; }
-        else if (rank > currentRank) { xOffset = 1; zIndex = 130; }
-      }
-      return { rank, label: filtered[0].seniority, xOffset, zIndex, nodes: filtered };
+      return { rank, label: filtered[0].seniority, nodes: filtered };
     }).filter((r): r is NonNullable<typeof r> => r !== null);
   });
 
@@ -92,19 +80,40 @@
   }
 
   const SENIORITY_LABELS: Record<string, string> = {
-    junior: "Junior",
-    mid: "Mid",
-    senior: "Senior",
-    lead: "Lead",
-    staff: "Staff",
-    principal: "Principal",
+    junior: "Junior", mid: "Mid", senior: "Senior",
+    lead: "Lead", staff: "Staff", principal: "Principal",
   };
+
+  const TIER_LABELS: Record<string, string> = {
+    current: "Current", next: "Next", stretch: "Stretch", "long-term": "Long Term",
+  };
+
+  const RING_RADIUS = 13;
+  const RING_CIRC = 2 * Math.PI * RING_RADIUS;
+
+  function scoreColor(score: number): string {
+    if (score >= 60) return "text-success stroke-success";
+    if (score >= 40) return "text-warning stroke-warning";
+    return "text-danger stroke-danger";
+  }
+
+  function scoreBg(score: number): string {
+    if (score >= 60) return "bg-success";
+    if (score >= 40) return "bg-warning";
+    return "bg-danger";
+  }
+
+  function tierBorder(node: any): string {
+    if (node.tier === "current") return "ring-2 ring-tier-current";
+    if (node.tier === "next") return "ring-1 ring-tier-next/40";
+    return "";
+  }
 </script>
 
-<div class="mx-auto max-w-6xl px-4 py-8">
-  <header class="mb-8">
-    <h1 class="text-3xl font-bold text-foreground">Career Map</h1>
-    <p class="mt-1 text-muted-foreground">Your career graph &mdash; visualize your path</p>
+<div class="mx-auto max-w-5xl px-4 py-8">
+  <header class="mb-6">
+    <h1 class="text-2xl font-bold text-foreground sm:text-3xl">Career Map</h1>
+    <p class="mt-1 text-sm text-muted-foreground">Your career progression tree</p>
     {#if aiError}
       <p class="mt-3 text-sm text-danger">Could not generate AI career map.</p>
     {:else if aiReasoning}
@@ -112,115 +121,135 @@
     {/if}
   </header>
 
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-    <div class="lg:col-span-2">
-      <Card.Root>
-        <Card.Header>
-          <Card.Title>Skill Progression</Card.Title>
-        </Card.Header>
-        <Card.Content>
-          {#if graph}
-          <div class="flex flex-col gap-6 lg:gap-8">
-            {#each seniorityRows as row}
-              <div
-                class="flex flex-wrap items-start gap-4 transition-all duration-300"
-                style="position: relative; z-index: {row.zIndex}; transform: translateX(clamp(-48px, {row.xOffset * 2}vw, 48px));"
-              >
-                <div class="w-20 shrink-0 pt-2 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {SENIORITY_LABELS[row.label.toLowerCase()] || row.label}
-                </div>
-                <div class="flex flex-1 flex-wrap items-center gap-3">
-                  {#each row.nodes as node}
-                    <button
-                      onclick={() => selectedRole = node}
-                      class="cursor-pointer rounded-lg border px-3 py-2.5 text-left text-sm transition-all hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none {node.tier === 'current' ? 'ring-2 ring-tier-current bg-tier-current/10' : 'border-tier-next bg-tier-next/10'}"
-                    >
-                      <div class="font-medium text-foreground">{node.name}</div>
-                      <div class="mt-0.5 flex items-center gap-1">
-                        <Badge variant="outline" size="xs">{node.category}</Badge>
-                        <span class="text-[10px] uppercase tracking-wide {node.tier === 'current' ? 'text-tier-current-foreground' : 'text-tier-next-foreground'}">
-                          {tierLabels[node.tier]}
-                        </span>
+  <Card.Root>
+    <Card.Content class="p-4 sm:p-6">
+      {#if graph}
+        <div class="space-y-1">
+          {#each seniorityRows as row, i}
+            <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <div class="shrink-0 pt-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:w-20 sm:pt-3 sm:text-right">
+                {SENIORITY_LABELS[row.label.toLowerCase()] || row.label}
+              </div>
+              <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap">
+                {#each row.nodes as node}
+                  <div
+                    class="relative flex-1 rounded-lg border bg-card p-3 min-w-0 sm:basis-[200px] {tierBorder(node)} {node.tier === 'current' ? 'node-glow' : ''}"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div class="flex-1 min-w-0">
+                        <div class="truncate text-sm font-medium text-foreground">{node.name}</div>
+                        <div class="mt-0.5 flex flex-wrap items-center gap-1">
+                          <Badge variant="outline" size="xs">{node.category}</Badge>
+                          {#if node.tier === 'current'}
+                            <Badge variant="outline" size="xs" class="bg-brand/10 text-brand border-brand/30">Current</Badge>
+                          {:else if node.tier === 'next'}
+                            <Badge variant="outline" size="xs" class="bg-success/10 text-success border-success/30">Next</Badge>
+                          {:else if node.tier === 'stretch'}
+                            <Badge variant="secondary" size="xs">Stretch</Badge>
+                          {:else}
+                            <Badge variant="secondary" size="xs">Long Term</Badge>
+                          {/if}
+                        </div>
                       </div>
                       {#if node.matchScore !== undefined}
-                        <div class="mt-0.5 text-xs text-muted-foreground">Match: {node.matchScore}%</div>
+                        <div class="relative size-9 shrink-0 sm:size-10">
+                          <svg viewBox="0 0 32 32" class="size-9 -rotate-90 sm:size-10">
+                            <circle cx="16" cy="16" r={RING_RADIUS} fill="none" stroke-width="3" class="stroke-muted" opacity="0.15"/>
+                            <circle cx="16" cy="16" r={RING_RADIUS} fill="none" stroke-width="3"
+                              stroke-dasharray={RING_CIRC} stroke-dashoffset={RING_CIRC * (1 - node.matchScore / 100)}
+                              stroke-linecap="round" class={scoreColor(node.matchScore)} style="transition: stroke-dashoffset 0.6s"/>
+                          </svg>
+                          <span class="absolute inset-0 flex items-center justify-center text-[9px] font-bold {scoreColor(node.matchScore).split(' ')[0]}">
+                            {node.matchScore}
+                          </span>
+                        </div>
                       {/if}
-                    </button>
-                  {/each}
-                </div>
+                    </div>
+
+                    <div class="mt-3 space-y-3 border-t border-border pt-3">
+                      {#if node.description}
+                        <p class="text-sm text-muted-foreground">{node.description}</p>
+                      {/if}
+
+                      {#if node.skillGaps?.length}
+                        <div>
+                          <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-danger">Requirements</p>
+                          <div class="flex flex-wrap gap-1.5">
+                            {#each node.skillGaps as gap}
+                              <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{gap}</Badge>
+                            {/each}
+                          </div>
+                        </div>
+                      {/if}
+
+                      {#if node.matchScore !== undefined}
+                        <div>
+                          <div class="mb-1 flex items-center justify-between text-sm">
+                            <span class="text-muted-foreground">Match</span>
+                            <span class="font-bold {scoreColor(node.matchScore).split(' ')[0]}">{node.matchScore}%</span>
+                          </div>
+                          <div class="h-1.5 w-full rounded-full bg-muted">
+                            <div
+                              class="h-1.5 rounded-full transition-all {scoreBg(node.matchScore)}"
+                              style="width: {node.matchScore}%"
+                            ></div>
+                          </div>
+                        </div>
+                      {/if}
+
+                      {#if node.tier !== 'current'}
+                        <Button size="sm" class="w-full" disabled={creatingQuest} onclick={() => handlePathToUnlock(node)}>
+                          {creatingQuest ? "Creating quest..." : "Path to unlock"}
+                        </Button>
+                      {/if}
+                    </div>
+                  </div>
+                {/each}
               </div>
-            {/each}
-          </div>
-          {:else}
-            <p class="py-8 text-center text-sm text-muted-foreground">Loading your career map...</p>
-          {/if}
-        </Card.Content>
-      </Card.Root>
-    </div>
+            </div>
 
-    <div>
-      {#if selectedRole}
-        <Card.Root>
-          <Card.Header>
-            <Card.Title>{selectedRole.name}</Card.Title>
-            <Card.Description>
-              <Badge variant="outline">{selectedRole.category}</Badge>
-              <Badge variant="outline">{selectedRole.seniority}</Badge>
-              <Badge class="ml-1" variant={selectedRole.tier === 'current' ? 'default' : 'secondary'}>{tierLabels[selectedRole.tier]}</Badge>
-            </Card.Description>
-          </Card.Header>
-          <Card.Content class="space-y-4">
-            {#if selectedRole.description}
-              <p class="text-sm text-muted-foreground">{selectedRole.description}</p>
-            {/if}
-
-            {#if selectedRole.skillGaps?.length}
-              <div>
-                <p class="mb-1 text-xs font-medium text-danger">Skill gaps</p>
-                <div class="flex flex-wrap gap-1">
-                  {#each selectedRole.skillGaps as gap}
-                    <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{gap}</Badge>
-                  {/each}
-                </div>
-              </div>
-            {/if}
-
-            {#if selectedRole.matchScore !== undefined}
-              <div>
-                <div class="mb-1 flex items-center justify-between">
-                  <p class="text-sm font-medium text-foreground">Match Score</p>
-                  <span class="text-lg font-bold {selectedRole.matchScore >= 60 ? 'text-success' : selectedRole.matchScore >= 40 ? 'text-warning' : 'text-danger'}">{selectedRole.matchScore}%</span>
-                </div>
-                <div class="h-2 w-full rounded-full bg-muted">
-                  <div
-                    class="h-2 rounded-full transition-all {selectedRole.matchScore >= 60 ? 'bg-success' : selectedRole.matchScore >= 40 ? 'bg-warning' : 'bg-danger'}"
-                    style="width: {selectedRole.matchScore}%"
-                  ></div>
+            {#if i < seniorityRows.length - 1}
+              <div class="flex flex-col gap-3 sm:flex-row sm:gap-4" aria-hidden="true">
+                <div class="hidden shrink-0 sm:block sm:w-20"></div>
+                <div class="flex flex-1 justify-center py-1">
+                  <div class="tier-line h-8 sm:h-10"></div>
                 </div>
               </div>
             {/if}
-
-            {#if selectedRole.tier !== 'current'}
-              <div class="pt-2">
-                <Button
-                  size="sm"
-                  class="w-full"
-                  disabled={creatingQuest}
-                  onclick={() => handlePathToUnlock(selectedRole)}
-                >
-                  {creatingQuest ? "Creating quest..." : "Path to unlock"}
-                </Button>
-              </div>
-            {/if}
-          </Card.Content>
-        </Card.Root>
+          {/each}
+        </div>
       {:else}
-        <Card.Root>
-          <Card.Content>
-            <p class="text-sm text-muted-foreground">Click a role to see details</p>
-          </Card.Content>
-        </Card.Root>
+        <div class="space-y-1" aria-hidden="true">
+          {#each ['Junior', 'Mid', 'Senior'] as tier, i}
+            <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <div class="shrink-0 pt-2 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:w-20 sm:pt-3 sm:text-right">
+                {tier}
+              </div>
+              <div class="flex flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap">
+                {#each [0, 1] as _}
+                  <div class="flex-1 min-w-0 rounded-lg border bg-card p-3 sm:basis-[200px]">
+                    <div class="flex items-center gap-3">
+                      <div class="flex-1 min-w-0 space-y-2">
+                        <div class="skeleton-shimmer h-3.5 w-3/4 rounded"></div>
+                        <div class="flex items-center gap-1.5">
+                          <div class="skeleton-shimmer h-3.5 w-16 rounded-full"></div>
+                          <div class="skeleton-shimmer h-2.5 w-8 rounded"></div>
+                        </div>
+                      </div>
+                      <div class="skeleton-shimmer size-9 shrink-0 rounded-full sm:size-10"></div>
+                    </div>
+                  </div>
+                {/each}
+              </div>
+            </div>
+            {#if i < 2}
+              <div class="flex justify-center py-1" aria-hidden="true">
+                <div class="tier-line h-8 sm:h-10"></div>
+              </div>
+            {/if}
+          {/each}
+        </div>
       {/if}
-    </div>
-  </div>
+    </Card.Content>
+  </Card.Root>
 </div>

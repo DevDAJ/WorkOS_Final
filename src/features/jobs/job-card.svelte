@@ -11,6 +11,14 @@
     if (min) return `From ${fmt(min)}`;
     return `Up to ${fmt(max!)}`;
   }
+
+  function formatType(t: string): string {
+    return t.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  const LOCATION_LABELS: Record<string, string> = {
+    ON_SITE: "On-site", REMOTE: "Remote", HYBRID: "Hybrid",
+  };
 </script>
 
 <a
@@ -38,16 +46,17 @@
         {/if}
       </div>
     </div>
-    <Badge variant="outline" size="xs">{job.type.replace("_", " ")}</Badge>
+    <Badge variant="outline" size="xs">{formatType(job.type)}</Badge>
   </div>
   <div class="mt-3 flex flex-wrap gap-1.5">
     <Badge variant="secondary" size="xs">{job.seniority}</Badge>
     <Badge variant="secondary" size="xs">{job.category}</Badge>
+    <Badge variant="outline" size="xs">{LOCATION_LABELS[job.locationType] || job.locationType}</Badge>
     {#each job.skills.slice(0, 4) as skill}
-      <Badge variant="ghost" size="xs">{skill}</Badge>
+      <Badge variant="outline" size="xs">{skill}</Badge>
     {/each}
     {#if job.skills.length > 4}
-      <Badge variant="ghost" size="xs">+{job.skills.length - 4}</Badge>
+      <Badge variant="outline" size="xs">+{job.skills.length - 4}</Badge>
     {/if}
   </div>
 </a>

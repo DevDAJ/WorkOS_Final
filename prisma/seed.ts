@@ -1,6 +1,7 @@
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { seedUsers } from "./seed-users";
+import { seedJobs } from "../src/features/jobs/seed";
 
 const adapter = new PrismaPg({ connectionString: process.env["DATABASE_URL"]! });
 const prisma = new PrismaClient({ adapter });
@@ -11,6 +12,16 @@ async function main() {
     console.log("Roles already seeded, skipping.");
   } else {
     await seedRoles();
+  }
+
+  const jobExists = await prisma.job.findFirst();
+  if (jobExists) {
+    console.log("Jobs already seeded, skipping.");
+  } else {
+    for (const job of seedJobs) {
+      await prisma.job.create({ data: job });
+    }
+    console.log(`Seeded ${seedJobs.length} jobs.`);
   }
 
   await seedUsers(prisma);

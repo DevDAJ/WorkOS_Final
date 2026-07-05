@@ -18,10 +18,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
       select: { name: true },
     });
     const userSkillNames = new Set(userSkills.map((s) => s.name.toLowerCase()));
+    const matchedSkills = job.skills.filter((s) => userSkillNames.has(s.toLowerCase()));
     skillGaps = job.skills.filter((s) => !userSkillNames.has(s.toLowerCase()));
+    const matchScore = job.skills.length > 0 ? Math.round((matchedSkills.length / job.skills.length) * 100) : 0;
+    return { job, application, skillGaps, strengths: matchedSkills, matchScore };
   }
 
-  return { job, application, skillGaps };
+  return { job, application, skillGaps, strengths: [] as string[], matchScore: 0 };
 };
 
 export const actions: Actions = {

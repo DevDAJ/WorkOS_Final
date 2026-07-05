@@ -3,7 +3,7 @@ import { env } from "$env/dynamic/private";
 const DEFAULT_MODEL = "google/gemma-4-26b-a4b-it:free";
 const MAX_RETRIES = 3;
 const BASE_DELAY = 1000;
-const TIMEOUT = 8000;
+const TIMEOUT = 45000;
 
 function extractJSON(text: string): string | null {
   const trimmed = text.trim();

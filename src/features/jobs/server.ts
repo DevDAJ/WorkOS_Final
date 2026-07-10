@@ -18,7 +18,18 @@ export async function seedJobsOnce() {
   seeded = true;
 }
 
-const PAGE_SIZE = 10;
+export async function isCurrentlyStudying(userId: string): Promise<boolean> {
+  const count = await prisma.education.count({
+    where: {
+      userId,
+      OR: [
+        { endDate: null },
+        { endDate: { gt: new Date() } },
+      ],
+    },
+  });
+  return count > 0;
+}
 
 export interface JobFilters {
   search?: string;
@@ -29,10 +40,9 @@ export interface JobFilters {
   salaryMin?: number;
   salaryMax?: number;
   sort?: "newest" | "salary_high" | "salary_low";
-  page?: number;
 }
 
-export async function getJobs(filters: JobFilters) {
+export async function getJobs(filters: JobFilters, userId?: string) {
   const where: Prisma.JobWhereInput = { status: "ACTIVE" };
 
   if (filters.search) {
@@ -49,20 +59,21 @@ export async function getJobs(filters: JobFilters) {
   if (filters.type) where.type = filters.type as any;
   if (filters.salaryMin) where.salaryMin = { gte: filters.salaryMin };
   if (filters.salaryMax) where.salaryMax = { lte: filters.salaryMax };
+  if (userId) {
+    const studying = await isCurrentlyStudying(userId);
+    if (!studying) where.type = { not: "INTERN" };
+  }
 
   let orderBy: Prisma.JobOrderByWithRelationInput = { createdAt: "desc" };
   if (filters.sort === "salary_high") orderBy = { salaryMax: "desc" };
   else if (filters.sort === "salary_low") orderBy = { salaryMin: "asc" };
 
-  const page = Math.max(1, filters.page ?? 1);
-  const skip = (page - 1) * PAGE_SIZE;
-
   const [jobs, total] = await Promise.all([
-    prisma.job.findMany({ where, orderBy, skip, take: PAGE_SIZE }),
+    prisma.job.findMany({ where, orderBy }),
     prisma.job.count({ where }),
   ]);
 
-  return { jobs, total, page, totalPages: Math.ceil(total / PAGE_SIZE) };
+  return { jobs, total };
 }
 
 export async function getJob(id: string) {

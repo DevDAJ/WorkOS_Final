@@ -62,10 +62,6 @@ export function getSessionCookie(token: string): string {
   return `${SESSION_COOKIE}=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${SESSION_EXPIRY / 1000}`;
 }
 
-export function getClearSessionCookie(): string {
-  return `${SESSION_COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`;
-}
-
 export function getSessionTokenFromRequest(request: Request): string | null {
   const cookies = request.headers.get("cookie") || "";
   const match = cookies.match(new RegExp(`${SESSION_COOKIE}=([^;]+)`));

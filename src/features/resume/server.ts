@@ -186,10 +186,6 @@ function fmtDate(d: Date | string | null | undefined): string {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-export function getApplicableStyle(jobCategory: string): "professional" | "creative" {
-  return getStyle(jobCategory);
-}
-
 export async function generateResumeHtml(userId: string, jobId: string): Promise<{ html: string; style: string } | null> {
   const [job, user] = await Promise.all([
     prisma.job.findUnique({ where: { id: jobId } }),

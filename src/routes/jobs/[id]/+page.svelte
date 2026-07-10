@@ -1,18 +1,12 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Badge } from "$lib/components/ui/badge";
-  import { Label } from "$lib/components/ui/label";
-  import { Textarea } from "$lib/components/ui/textarea";
   import * as Dialog from "$lib/components/ui/dialog";
 
   let { data } = $props();
-  let { job, application, skillGaps, strengths, matchScore, resume, workExps, userProjects } = $state(data);
-  let step = $state<"idle" | "gaps" | "cover" | "submitted">("idle");
-  let coverLetter = $state("");
+  let { job, application, skillGaps, strengths, matchScore, resume, aiKeywords = [], internshipBlocked = false } = $state(data);
 
-  let gaps = $state(
-    skillGaps.map((s: string) => ({ skill: s, claimed: false, evidence: "", otherText: "" }))
-  );
+  let flashMessage = $state("");
 
   const RING_RADIUS = 16;
   const RING_CIRC = 2 * Math.PI * RING_RADIUS;
@@ -39,20 +33,6 @@
     ON_SITE: "On-site", REMOTE: "Remote", HYBRID: "Hybrid",
   };
 
-  async function submitApplication() {
-    const form = new FormData();
-    if (coverLetter) form.set("coverLetter", coverLetter);
-    for (const g of gaps) {
-      form.set(`claim_${g.skill}`, g.claimed ? "true" : "false");
-      if (g.claimed) {
-        const val = g.evidence === "__other__" ? g.otherText : g.evidence;
-        if (val) form.set(`evidence_${g.skill}`, val);
-      }
-    }
-    await fetch("?/apply", { method: "POST", body: form });
-    step = "submitted";
-  }
-
   let viewingResume = $state<string | null>(null);
 
   function downloadPdf(id: string) {
@@ -76,10 +56,33 @@
     REJECTED: "destructive",
     WITHDRAWN: "outline",
   };
+
+  async function addSkill(name: string) {
+    const owned = strengths.some((s: string) => s.toLowerCase() === name.toLowerCase());
+    if (owned) {
+      flashMessage = `${name} is already in your profile`;
+      setTimeout(() => flashMessage = "", 3000);
+      return;
+    }
+
+    const res = await fetch("?/addSkill", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ name }),
+    });
+    if (res.ok) {
+      skillGaps = skillGaps.filter((s: string) => s.toLowerCase() !== name.toLowerCase());
+      strengths = [...strengths, name];
+      const total = strengths.length + skillGaps.length;
+      matchScore = total > 0 ? Math.round((strengths.length / total) * 100) : 0;
+      flashMessage = `${name} added to your profile`;
+      setTimeout(() => flashMessage = "", 3000);
+    }
+  }
 </script>
 
 <div class="mx-auto max-w-4xl px-4 py-8">
-  <a href="/" class="mb-4 inline-flex text-sm text-muted-foreground hover:text-foreground">&larr; Back to jobs</a>
+  <a href="/jobs" class="mb-4 inline-flex text-sm text-muted-foreground hover:text-foreground">&larr; Back to jobs</a>
 
   <div class="rounded-xl border border-border bg-card p-6 sm:p-8">
     <div class="flex items-start justify-between gap-4">
@@ -116,6 +119,16 @@
         <Badge variant="outline" class="text-xs">{skill}</Badge>
       {/each}
     </div>
+    {#if aiKeywords.length > 0}
+      <div class="mt-3">
+        <p class="mb-1.5 text-xs font-medium text-muted-foreground">AI-extracted keywords from description</p>
+        <div class="flex flex-wrap gap-1.5">
+          {#each aiKeywords.filter((k: string) => !job.skills.some((s: string) => s.toLowerCase() === k.toLowerCase())) as kw}
+            <button type="button" onclick={() => addSkill(kw)} class="cursor-pointer rounded-full border border-brand/20 bg-brand/10 px-2.5 py-0.5 text-xs font-medium text-brand transition-colors hover:bg-brand/20">{kw}</button>
+          {/each}
+        </div>
+      </div>
+    {/if}
   </div>
 
   <div class="mt-6 grid gap-6 lg:grid-cols-3">
@@ -167,102 +180,46 @@
     </div>
 
     <div class="space-y-4">
-      {#if application?.status === "WITHDRAWN"}
+      {#if flashMessage}
+        <div class="rounded-lg border border-border bg-card px-4 py-2.5 text-sm text-foreground">{flashMessage}</div>
+      {/if}
+
+      {#if internshipBlocked}
+        <div class="rounded-xl border border-border bg-card p-6 text-center">
+          <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-muted">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4Z"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>
+          </div>
+          <p class="font-medium text-foreground">Students only</p>
+          <p class="mt-1 text-xs text-muted-foreground">This internship is only available to current students.</p>
+          <a href="/living-cv" class="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90">Add education to your profile</a>
+        </div>
+      {:else if application && application.status !== "WITHDRAWN"}
+        <div class="rounded-xl border border-border bg-card p-6 text-center">
+          <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-success/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <p class="font-medium text-foreground">Application submitted</p>
+          <Badge variant={statusVariant[application.status] || "outline"} class="mt-2">
+            {statusLabel[application.status] || application.status}
+          </Badge>
+          {#if resume}
+            <Button onclick={() => viewingResume = resume.id} class="mt-3 w-full" size="sm" variant="outline">View Resume</Button>
+          {/if}
+        </div>
+      {:else if application?.status === "WITHDRAWN"}
         <div class="rounded-xl border border-border bg-card p-6 text-center">
           <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-muted">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M12 3v6h6"/></svg>
           </div>
           <p class="font-medium text-foreground">Application withdrawn</p>
           <p class="mt-1 text-xs text-muted-foreground">You can re-apply at any time.</p>
-          <Button onclick={() => step = skillGaps.length > 0 ? "gaps" : "cover"} class="mt-4 w-full">Re-apply</Button>
-        </div>
-      {:else if application || step === "submitted"}
-        <div class="rounded-xl border border-border bg-card p-6 text-center">
-          <div class="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-success/10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-success"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
-          <p class="font-medium text-foreground">Application submitted</p>
-          {#if application}
-            <Badge variant={statusVariant[application.status] || "outline"} class="mt-2">
-              {statusLabel[application.status] || application.status}
-            </Badge>
-          {/if}
-          {#if resume}
-            <Button onclick={() => viewingResume = resume.id} class="mt-3 w-full" size="sm" variant="outline">View Resume</Button>
-          {/if}
-        </div>
-      {:else if step === "cover"}
-        <div class="rounded-xl border border-border bg-card p-6">
-          <h3 class="font-semibold text-foreground">Cover Letter</h3>
-          <div class="mt-4 space-y-3">
-            <div>
-              <Label>Cover Letter (optional)</Label>
-              <Textarea bind:value={coverLetter} class="mt-1 min-h-[160px]" placeholder="Tell them why you're a great fit..." />
-            </div>
-            <div class="flex gap-2">
-              <Button onclick={submitApplication}>Submit application</Button>
-              <Button variant="ghost" onclick={() => step = "gaps"}>Back</Button>
-            </div>
-          </div>
-        </div>
-      {:else if step === "gaps"}
-        <div class="rounded-xl border border-border bg-card p-6">
-          <h3 class="font-semibold text-foreground">Skill gaps</h3>
-          <p class="mt-1 text-xs text-muted-foreground">Do you have these skills? Tell us where you used them.</p>
-          <div class="mt-4 space-y-4">
-            {#each gaps as g, i}
-              <div class="rounded-lg border border-border bg-muted/50 p-3">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-foreground">{g.skill}</span>
-                  <button
-                    onclick={() => gaps[i].claimed = !gaps[i].claimed}
-                    class="rounded-md px-2 py-1 text-xs font-medium transition-colors {g.claimed ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}"
-                  >
-                    {g.claimed ? "I have this" : "Missing"}
-                  </button>
-                </div>
-                {#if g.claimed}
-                  <select
-                    bind:value={gaps[i].evidence}
-                    class="border-input mt-2 w-full rounded-lg border bg-transparent px-2 py-1.5 text-xs outline-none focus:border-ring"
-                  >
-                    <option value="">Select where you used this...</option>
-                    {#if workExps.length}
-                      <optgroup label="Work Experience">
-                        {#each workExps as we}
-                          <option value="work_{we.id}">{we.role} at {we.company}</option>
-                        {/each}
-                      </optgroup>
-                    {/if}
-                    {#if userProjects.length}
-                      <optgroup label="Projects">
-                        {#each userProjects as p}
-                          <option value="proj_{p.id}">{p.title}</option>
-                        {/each}
-                      </optgroup>
-                    {/if}
-                    <option value="__other__">Other (type below)</option>
-                  </select>
-                  {#if gaps[i].evidence === "__other__"}
-                    <textarea
-                      bind:value={gaps[i].otherText}
-                      placeholder="Describe where you used this skill..."
-                      class="border-input mt-2 w-full rounded-lg border bg-transparent px-2 py-1.5 text-xs outline-none focus:border-ring"
-                      rows="2"
-                    ></textarea>
-                  {/if}
-                {/if}
-              </div>
-            {/each}
-          </div>
-          <Button onclick={() => step = "cover"} class="mt-4 w-full">Continue</Button>
-          <button onclick={() => step = "idle"} class="mt-2 w-full cursor-pointer text-center text-xs text-muted-foreground hover:text-foreground">Cancel</button>
+          <a href="/jobs/{job.id}/apply" class="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90">Re-apply</a>
         </div>
       {:else}
         <div class="rounded-xl border border-border bg-card p-6">
           <h3 class="font-semibold text-foreground">Apply for this job</h3>
           <p class="mt-2 text-sm text-muted-foreground">Ready to apply? Submit your application.</p>
-          <Button onclick={() => step = skillGaps.length > 0 ? "gaps" : "cover"} class="mt-4 w-full">Apply now</Button>
+          <a href="/jobs/{job.id}/apply" class="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90">Apply now</a>
         </div>
       {/if}
 
@@ -294,7 +251,7 @@
             {#if skillGaps.length}
               <div class="flex flex-wrap gap-1">
                 {#each skillGaps as s}
-                  <Badge variant="secondary" size="xs" class="bg-danger/10 text-danger border-danger/20">{s}</Badge>
+                  <button type="button" onclick={() => addSkill(s)} class="cursor-pointer rounded-full border border-danger/20 bg-danger/10 px-2.5 py-0.5 text-xs font-medium text-danger transition-colors hover:bg-danger/20">{s}</button>
                 {/each}
               </div>
             {/if}

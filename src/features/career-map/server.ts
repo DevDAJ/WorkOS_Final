@@ -1,50 +1,6 @@
 import { prisma } from "$lib/server";
 import { computeRoleMatch } from "$lib/scoring/skill-role-match";
 
-export async function seedRoles(): Promise<void> {
-  const { roles, edges } = await import("./seed");
-  const existing = await prisma.careerRole.findFirst();
-  if (existing) return;
-
-  for (const r of roles) {
-    await prisma.careerRole.create({
-      data: {
-        name: r.name,
-        category: r.category as any,
-        seniority: r.seniority as any,
-        description: r.description,
-        requirements: {
-          create: r.skills.map((s) => ({
-            skillName: s.name,
-            weight: s.weight,
-            isOptional: s.isOptional,
-            minYears: s.minYears,
-          })),
-        },
-      },
-    });
-  }
-
-  const roleMap = new Map<string, string>();
-  const allRoles = await prisma.careerRole.findMany();
-  for (const r of allRoles) roleMap.set(r.name, r.id);
-
-  for (const e of edges) {
-    const fromId = roleMap.get(e.fromRole);
-    const toId = roleMap.get(e.toRole);
-    if (fromId && toId) {
-      await prisma.careerPathEdge.create({
-        data: {
-          fromRoleId: fromId,
-          toRoleId: toId,
-          category: e.category as any,
-          requiredSkillScore: e.requiredSkillScore,
-        },
-      });
-    }
-  }
-}
-
 export async function getCareerMap(userId: string, _currentJobTitle?: string) {
   const previousRoles = await prisma.workExperience.findMany({
     where: { userId, current: false },

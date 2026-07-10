@@ -40,25 +40,6 @@ function extractJSON(text: string): string | null {
   return null;
 }
 
-async function fetchWithTimeout(
-  url: string,
-  opts: RequestInit,
-  ms: number,
-): Promise<Response> {
-  const ctrl = new AbortController();
-  const id = setTimeout(() => ctrl.abort(), ms);
-  try {
-    const res = await fetch(url, { ...opts, signal: ctrl.signal });
-    return res;
-  } finally {
-    clearTimeout(id);
-  }
-}
-
-function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
 export async function callAI(
   system: string,
   user: string,
@@ -69,11 +50,12 @@ export async function callAI(
   const model = env.OPENROUTER_MODEL || DEFAULT_MODEL;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    if (attempt > 0) await sleep(BASE_DELAY * Math.pow(2, attempt - 1));
+    if (attempt > 0) await new Promise((r) => setTimeout(r, BASE_DELAY * Math.pow(2, attempt - 1)));
     try {
-      const res = await fetchWithTimeout(
+      const res = await fetch(
         "https://openrouter.ai/api/v1/chat/completions",
         {
+          signal: AbortSignal.timeout(TIMEOUT),
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -91,7 +73,6 @@ export async function callAI(
             max_tokens: 1024,
           }),
         },
-        TIMEOUT,
       );
       if (!res.ok) {
         if (res.status === 429) {

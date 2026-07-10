@@ -1,5 +1,3 @@
-export const TIER_ORDER = ["current", "jump", "next", "stretch", "long-term"];
-
 const SENIORITY_RANK: Record<string, number> = {
   intern: 0,
   freshgrad: 1,

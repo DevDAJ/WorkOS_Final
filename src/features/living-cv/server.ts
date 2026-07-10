@@ -1,11 +1,6 @@
 import { prisma } from "$lib/server";
-import type { PersonalInfo, Education, WorkExperience, Project, Certification, Award, Language, Reference, SocialLink } from "$generated/prisma/client";
 
-export async function getPersonalInfo(userId: string): Promise<PersonalInfo | null> {
-  return prisma.personalInfo.findUnique({ where: { userId } });
-}
-
-export async function upsertPersonalInfo(userId: string, data: Partial<PersonalInfo>): Promise<PersonalInfo> {
+export async function upsertPersonalInfo(userId: string, data: any): Promise<any> {
   return prisma.personalInfo.upsert({
     where: { userId },
     update: data,
@@ -13,17 +8,13 @@ export async function upsertPersonalInfo(userId: string, data: Partial<PersonalI
   });
 }
 
-export async function getEducation(userId: string): Promise<Education[]> {
-  return prisma.education.findMany({ where: { userId }, orderBy: { startDate: "desc" } });
-}
-
-export async function createEducation(userId: string, data: any): Promise<Education> {
+export async function createEducation(userId: string, data: any): Promise<any> {
   return prisma.education.create({
     data: { ...data, userId, startDate: new Date(data.startDate), endDate: data.endDate ? new Date(data.endDate) : null },
   });
 }
 
-export async function updateEducation(id: string, userId: string, data: any): Promise<Education> {
+export async function updateEducation(id: string, userId: string, data: any): Promise<any> {
   return prisma.education.update({
     where: { id, userId },
     data: { ...data, startDate: new Date(data.startDate), endDate: data.endDate ? new Date(data.endDate) : null },
@@ -34,17 +25,13 @@ export async function deleteEducation(id: string, userId: string): Promise<void>
   await prisma.education.delete({ where: { id, userId } });
 }
 
-export async function getWorkExperience(userId: string): Promise<WorkExperience[]> {
-  return prisma.workExperience.findMany({ where: { userId }, orderBy: { startDate: "desc" } });
-}
-
-export async function createWorkExperience(userId: string, data: any): Promise<WorkExperience> {
+export async function createWorkExperience(userId: string, data: any): Promise<any> {
   return prisma.workExperience.create({
     data: { ...data, userId, startDate: new Date(data.startDate), endDate: data.endDate ? new Date(data.endDate) : null },
   });
 }
 
-export async function updateWorkExperience(id: string, userId: string, data: any): Promise<WorkExperience> {
+export async function updateWorkExperience(id: string, userId: string, data: any): Promise<any> {
   return prisma.workExperience.update({
     where: { id, userId },
     data: { ...data, startDate: new Date(data.startDate), endDate: data.endDate ? new Date(data.endDate) : null },
@@ -55,15 +42,11 @@ export async function deleteWorkExperience(id: string, userId: string): Promise<
   await prisma.workExperience.delete({ where: { id, userId } });
 }
 
-export async function getProjects(userId: string): Promise<Project[]> {
-  return prisma.project.findMany({ where: { userId }, orderBy: { createdAt: "desc" } });
-}
-
-export async function createProject(userId: string, data: any): Promise<Project> {
+export async function createProject(userId: string, data: any): Promise<any> {
   return prisma.project.create({ data: { ...data, userId } });
 }
 
-export async function updateProject(id: string, userId: string, data: any): Promise<Project> {
+export async function updateProject(id: string, userId: string, data: any): Promise<any> {
   return prisma.project.update({ where: { id, userId }, data });
 }
 
@@ -71,33 +54,13 @@ export async function deleteProject(id: string, userId: string): Promise<void> {
   await prisma.project.delete({ where: { id, userId } });
 }
 
-export async function getCertifications(userId: string): Promise<Certification[]> {
-  return prisma.certification.findMany({ where: { userId }, orderBy: { date: "desc" } });
-}
-
-export async function getAwards(userId: string): Promise<Award[]> {
-  return prisma.award.findMany({ where: { userId }, orderBy: { date: "desc" } });
-}
-
-export async function getLanguages(userId: string): Promise<Language[]> {
-  return prisma.language.findMany({ where: { userId } });
-}
-
-export async function getReferences(userId: string): Promise<Reference[]> {
-  return prisma.reference.findMany({ where: { userId } });
-}
-
-export async function getSocialLinks(userId: string): Promise<SocialLink[]> {
-  return prisma.socialLink.findMany({ where: { userId } });
-}
-
-export async function createCertification(userId: string, data: any): Promise<Certification> {
+export async function createCertification(userId: string, data: any): Promise<any> {
   return prisma.certification.create({
     data: { ...data, userId, date: data.date ? new Date(data.date) : null },
   });
 }
 
-export async function updateCertification(id: string, userId: string, data: any): Promise<Certification> {
+export async function updateCertification(id: string, userId: string, data: any): Promise<any> {
   return prisma.certification.update({
     where: { id, userId },
     data: { ...data, date: data.date ? new Date(data.date) : undefined },
@@ -108,13 +71,13 @@ export async function deleteCertification(id: string, userId: string): Promise<v
   await prisma.certification.delete({ where: { id, userId } });
 }
 
-export async function createAward(userId: string, data: any): Promise<Award> {
+export async function createAward(userId: string, data: any): Promise<any> {
   return prisma.award.create({
     data: { ...data, userId, date: data.date ? new Date(data.date) : null },
   });
 }
 
-export async function updateAward(id: string, userId: string, data: any): Promise<Award> {
+export async function updateAward(id: string, userId: string, data: any): Promise<any> {
   return prisma.award.update({
     where: { id, userId },
     data: { ...data, date: data.date ? new Date(data.date) : undefined },
@@ -125,11 +88,11 @@ export async function deleteAward(id: string, userId: string): Promise<void> {
   await prisma.award.delete({ where: { id, userId } });
 }
 
-export async function createLanguage(userId: string, data: any): Promise<Language> {
+export async function createLanguage(userId: string, data: any): Promise<any> {
   return prisma.language.create({ data: { ...data, userId } });
 }
 
-export async function updateLanguage(id: string, userId: string, data: any): Promise<Language> {
+export async function updateLanguage(id: string, userId: string, data: any): Promise<any> {
   return prisma.language.update({ where: { id, userId }, data });
 }
 
@@ -137,11 +100,11 @@ export async function deleteLanguage(id: string, userId: string): Promise<void> 
   await prisma.language.delete({ where: { id, userId } });
 }
 
-export async function createReference(userId: string, data: any): Promise<Reference> {
+export async function createReference(userId: string, data: any): Promise<any> {
   return prisma.reference.create({ data: { ...data, userId } });
 }
 
-export async function updateReference(id: string, userId: string, data: any): Promise<Reference> {
+export async function updateReference(id: string, userId: string, data: any): Promise<any> {
   return prisma.reference.update({ where: { id, userId }, data });
 }
 
@@ -149,11 +112,11 @@ export async function deleteReference(id: string, userId: string): Promise<void>
   await prisma.reference.delete({ where: { id, userId } });
 }
 
-export async function createSocialLink(userId: string, data: any): Promise<SocialLink> {
+export async function createSocialLink(userId: string, data: any): Promise<any> {
   return prisma.socialLink.create({ data: { ...data, userId } });
 }
 
-export async function updateSocialLink(id: string, userId: string, data: any): Promise<SocialLink> {
+export async function updateSocialLink(id: string, userId: string, data: any): Promise<any> {
   return prisma.socialLink.update({ where: { id, userId }, data });
 }
 
